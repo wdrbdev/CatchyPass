@@ -1,0 +1,33 @@
+{
+  "name": "catchypass",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon npm start",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lightcoker/CatchyPass.git"
+  },
+  "author": "Albert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lightcoker/CatchyPass/issues"
+  },
+  "homepage": "https://github.com/lightcoker/CatchyPass#readme",
+  "dependencies": {
+    "amqp": "^0.2.7",
+    "amqplib": "^0.5.6",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jest": "^26.1.0",
+    "mongoose": "^5.9.21"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
