@@ -1,0 +1,7 @@
+redis
+pandoc
+
+# For Jupyter Notebook Extensions
+jupyterthemes
+jupyter_contrib_nbextensions
+yapf
