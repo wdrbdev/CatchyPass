@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-// Import configurations
+// Import configurations and setup
 const config = require("./config");
 
 const app = express();
@@ -19,28 +19,18 @@ app.get("/", (req, res) => {
 });
 
 /*
- * Initialize Redis
+ * Initialize MongoDB
  */
-const redis = require("redis");
-const client = redis.createClient({
-  host: config.redisHost,
-  port: config.redisPort,
-  retry_strategy: () => 1000,
-});
-// SUB/PUB mode for workers receiving regular commands
-const subscriber = redis.duplicate();
-const publisher = redis.duplicate();
-const redisObj = {
-  client,
-  subscriber,
-  publisher,
-};
+const redisObj = require("./services/redis")();
 
 /*
  * Initialize MongoDB
  */
 mongoose.connect(
-  `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPORT}`
+  `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPORT}`,
+  {
+    useNewUrlParser: true,
+  }
 );
 
 // Load schema
