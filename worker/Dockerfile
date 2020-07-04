@@ -1,6 +1,7 @@
 FROM tensorflow/tensorflow:latest-jupyter
 WORKDIR '/catchypass'
 COPY . .
+EXPOSE 8888
 
 RUN /usr/bin/python3 -m pip install --upgrade pip && \
   pip install -r requirements.txt
@@ -16,4 +17,6 @@ RUN jupyter nbextension enable varInspector/main
 RUN jupyter nbextension enable execute_time/ExecuteTime
 RUN jupyter nbextension enable autosavetime/main
 
-# CMD ["python", "worker"]
+CMD watchmedo auto-restart -R \
+  -p="*.py;*.txt" \
+  python worker.py
