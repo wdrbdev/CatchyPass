@@ -1,5 +1,7 @@
 redis
 pandoc
+watchdog
+argh
 
 # For Jupyter Notebook Extensions
 jupyterthemes
