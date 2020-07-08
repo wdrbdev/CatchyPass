@@ -1,3 +1,15 @@
+# Decryption for Travis CI
+openssl aes-256-cbc -K $encrypted_b76db231b579_key -iv $encrypted_b76db231b579_iv -in catchypass-183fad22a5a8.json.enc -out catchypass-183fad22a5a8.json -d
+# Connect to GCP
+curl https://sdk.cloud.google.com | bash > /dev/null;
+source $HOME/google-cloud-sdk/path.bash.inc
+gcloud components update kubectl
+gcloud auth activate-service-account --key-file catchypass-183fad22a5a8.json
+gcloud config set project catchypass
+gcloud config set compute/zone asia-east1
+gcloud container clusters get-credentials catchypass-cluster
+echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
 # Update the latest version for k8s to update the image
 docker build -t lightcoker/catchypass-client:latest -t lightcoker/catchypass-client:$SHA -f ./client/Dockerfile ./client
 docker build -t lightcoker/catchypass-server:latest -t lightcoker/catchypass-server:$SHA -f ./server/Dockerfile ./server
