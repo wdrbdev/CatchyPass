@@ -27,7 +27,7 @@ before_install:
   - curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
   # fix k8s error
   # - sudo systemctl enable kubelet.service
-  - sudo apt-get kubelet kubeadm ebtables socat
+  - sudo apt-get install kubelet kubeadm ebtables socat
   - swapoff -a && kubeadm reset && kudeadm init && sudo systemctl status kubelet
   - sudo minikube -v 9 start --vm-driver=none --bootstrapper=kubeadm --kubernetes-version=v1.18.5 --extra-config=apiserver.authorization-mode=RBAC --disk-size='8000mb'
   - minikube update-context
