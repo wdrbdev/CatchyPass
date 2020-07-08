@@ -1,0 +1,59 @@
+services:
+  - docker
+language: generic
+dist: xenial
+env:
+  global:
+    - SHA=$(echo -n $(date) | sha256sum)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+before_install:
+  - openssl aes-256-cbc -K $encrypted_b0327cdd0bab_key -iv $encrypted_b0327cdd0bab_iv -in catchypass-service-account.json.enc -out catchypass-service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file catchypass-service-account.json
+  - gcloud config set project catchypass
+  - gcloud config set compute/zone asia-east1
+  - gcloud container clusters get-credentials catchypass
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # -  # docker build
+  - docker build -t lightcoker/catchypass-clients ./client
+  - docker build -t lightcoker/catchypass-servers ./server
+  - docker build -t lightcoker/catchypass-workers ./worker
+  - docker build -t lightcoker/catchypas-mongos --build-arg MONGO_INITDB_ROOT_PASSWORD="$MONGO_PASSWORD_CI" ./mongo
+  - docker build -t lightcoker/catchypas-e2e ./e2e
+  # -  # deploy k8s
+  - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.5/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv minikube /usr/local/bin/
+  - curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+  - sudo minikube -v 9 start --vm-driver=none --bootstrapper=kubeadm --kubernetes-version=v1.18.5 --extra-config=apiserver.authorization-mode=RBAC --disk-size='8000mb'
+  - minikube update-context
+  - sleep 60
+  - kubectl get nodes
+  - kubectl create secret generic mongopassword --from-literal MONGO_PASSWORD="$MONGO_PASSWORD"
+  # -  # install helm
+  - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+  - chmod 700 get_helm.sh
+  - ./get_helm.sh
+  # -  # install nginx-ingress
+  - helm repo add stable https://kubernetes-charts.storage.googleapis.com
+  - helm install my-nginx stable/nginx-ingress --set rbac.create=true
+  - minikube addons enable ingress
+  # - # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+  # -  # deploy app
+  - kubectl apply -f k8s/db
+  - kubectl wait --for=condition=available --timeout=300s deployment/redis-deployment deployment/mongodb-deployment
+  - kubectl apply -f k8s/app
+  - kubectl wait --for=condition=available --timeout=300s deployment --all
+  - kubectl apply -f k8s/ingress-service-local.yaml
+  - sleep 10
+  - cat k8s/test/e2e.yaml | sed "s/ENV_VARS_MINIKUBE_IP/$(minikube ip)/g" | kubectl apply -f -
+
+script:
+  - kubectl wait --for=condition=complete --timeout=600s job/e2e
+  - kubectl logs job/e2e
+
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
