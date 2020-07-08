@@ -2,6 +2,8 @@ steps:
   # Clone from GitHub repo
   - name: gcr.io/cloud-builders/git
     args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+  - name: "ubuntu"
+    args: ["ls"]
   # Build images
   - name: "gcr.io/cloud-builders/docker"
     args:
@@ -42,12 +44,14 @@ steps:
       - --filename=./k8s/app
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
+      - --timeout=10m0s
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
       - --filename=./k8s/ingress-service-prod.yaml
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
+      - --timeout=10m0s
 images:
   [
     "asia.gcr.io/catchypass/mongo-prod",
