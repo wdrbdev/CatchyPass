@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: e2e
-          image: lightcoker/catchypass-e2e
+          image: asia.gcr.io/catchypass/catchypass-e2e
           imagePullPolicy: IfNotPresent
           command: ["npm", "run", "test"]
           env:

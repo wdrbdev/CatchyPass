@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: lightcoker/catchypass-client
+          image: asia.gcr.io/catchypass/catchypass-client
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
