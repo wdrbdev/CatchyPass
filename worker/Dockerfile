@@ -17,6 +17,4 @@ RUN jupyter nbextension enable varInspector/main
 RUN jupyter nbextension enable execute_time/ExecuteTime
 RUN jupyter nbextension enable autosavetime/main
 
-CMD watchmedo auto-restart -R \
-  -p="*.py;*.txt" \
-  python worker.py
+CMD ["python", "worker.py"]
