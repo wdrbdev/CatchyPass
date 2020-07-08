@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: e2e
+spec:
+  template:
+    spec:
+      containers:
+        - name: e2e
+          image: lightcoker/catchypass-e2e
+          imagePullPolicy: IfNotPresent
+          command: ["npm", "run", "test"]
+          env:
+            - name: MINIKUBE_IP
+              value: ENV_VARS_MINIKUBE_IP
+      restartPolicy: Never
+  backoffLimit: 10
