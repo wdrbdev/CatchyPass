@@ -8,23 +8,23 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
   # Decryption for Travis CI
-  - openssl aes-256-cbc -K $encrypted_852d8aedd774_key -iv $encrypted_852d8aedd774_iv -in catchypass-serviceaccount.json.enc -out catchypass-serviceaccount.json -d
+  - openssl aes-256-cbc -K $encrypted_b76db231b579_key -iv $encrypted_b76db231b579_iv -in catchypass-183fad22a5a8.json.enc -out catchypass-183fad22a5a8.json -d
   # Connect to GCP
   - curl https://sdk.cloud.google.com | bash > /dev/null;
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
-  - gcloud auth activate-service-account --key-file catchypass-serviceaccount.json
+  - gcloud auth activate-service-account --key-file catchypass-183fad22a5a8.json
   - gcloud config set project catchypass
   - gcloud config set compute/zone asia-east1
   - gcloud container clusters get-credentials catchypass
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  # -  # docker build
+  # docker build
   - docker build -t lightcoker/catchypass-clients ./client
   - docker build -t lightcoker/catchypass-servers ./server
   - docker build -t lightcoker/catchypass-workers ./worker
   - docker build -t lightcoker/catchypas-mongos --build-arg MONGO_INITDB_ROOT_PASSWORD="$MONGO_PASSWORD_CI" ./mongo
   - docker build -t lightcoker/catchypas-e2e ./e2e
-  # -  # deploy k8s
+  # deploy k8s
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.5/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv minikube /usr/local/bin/
   - curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
   - sudo minikube -v 9 start --vm-driver=none --bootstrapper=kubeadm --kubernetes-version=v1.18.5 --extra-config=apiserver.authorization-mode=RBAC --disk-size='8000mb'
@@ -32,16 +32,16 @@ before_install:
   - sleep 60
   - kubectl get nodes
   - kubectl create secret generic mongopassword --from-literal MONGO_PASSWORD="$MONGO_PASSWORD"
-  # -  # install helm
+  # install helm
   - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
   - chmod 700 get_helm.sh
   - ./get_helm.sh
-  # -  # install nginx-ingress
+  # install nginx-ingress
   - helm repo add stable https://kubernetes-charts.storage.googleapis.com
   - helm install my-nginx stable/nginx-ingress --set rbac.create=true
   - minikube addons enable ingress
   # - # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
-  # -  # deploy app
+  # deploy app
   - kubectl apply -f k8s/db
   - kubectl wait --for=condition=available --timeout=300s deployment/redis-deployment deployment/mongodb-deployment
   - kubectl apply -f k8s/app
