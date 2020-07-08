@@ -8,13 +8,7 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
     - CHANGE_MINIKUBE_NONE_USER=true
 before_install:
-  - sudo apt-get update && sudo apt-get install -y apt-transport-https curl
-  - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-  - "cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list \n
-    deb https://apt.kubernetes.io/ kubernetes-xenial main \n
-    EOF"
   - sudo apt-get update
-  - sudo apt-get install -y kubelet kubeadm
   - sudo apt-get -y install libxml2-dev
   # Decryption for Travis CI
   - openssl aes-256-cbc -K $encrypted_b76db231b579_key -iv $encrypted_b76db231b579_iv -in catchypass-183fad22a5a8.json.enc -out catchypass-183fad22a5a8.json -d
@@ -22,19 +16,12 @@ before_install:
   - curl https://sdk.cloud.google.com | bash > /dev/null;
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
+  - gcloud components install minikube
   - gcloud auth activate-service-account --key-file catchypass-183fad22a5a8.json
   - gcloud config set project catchypass
   - gcloud config set compute/zone asia-east1
   - gcloud container clusters get-credentials catchypass-cluster
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  # deploy k8s
-  - sudo apt install conntrack # Kubernetes 1.18.5 requires conntrack to be installed in root's path
-  - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.5/bin/linux/amd64/kubectl && chmod +x ./kubectl && sudo mv kubectl /usr/local/bin/
-  - curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-  # fix k8s error
-  # - sudo systemctl enable kubelet.service
-  - sudo apt-get install -y kubelet kubeadm ebtables socat
-  - swapoff -a && kubeadm reset && kudeadm init && sudo systemctl status kubelet
   - sudo minikube -v 9 start --vm-driver=none --bootstrapper=kubeadm --kubernetes-version=v1.18.5 --extra-config=apiserver.authorization-mode=RBAC --disk-size='8000mb'
   - minikube update-context
   - sleep 60
@@ -69,6 +56,7 @@ before_install:
 script:
   - kubectl wait --for=condition=complete --timeout=600s job/e2e
   - kubectl logs job/e2e
+  - minikube delete
 
 deploy:
   provider: script
