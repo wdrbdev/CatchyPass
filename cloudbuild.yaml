@@ -2,7 +2,7 @@ steps:
   # Clone from GitHub repo
   - name: gcr.io/cloud-builders/git
     args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
-  -
+  # Trigger multiple builds
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
