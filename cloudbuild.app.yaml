@@ -24,13 +24,6 @@ steps:
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=10m0s
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=./k8s/ingress-service-prod.yaml
-      - --location=${_LOCATION}
-      - --cluster=${_CLUSTER}
-      - --timeout=10m0s
 images:
   [
     "asia.gcr.io/catchypass/server-prod",
