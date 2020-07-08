@@ -15,6 +15,7 @@ spec:
       containers:
         - name: worker
           image: lightcoker/catchypass-worker
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
           env:

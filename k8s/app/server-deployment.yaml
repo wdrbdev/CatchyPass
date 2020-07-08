@@ -15,6 +15,7 @@ spec:
       containers:
         - name: server
           image: lightcoker/catchypass-server
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           env:
