@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: asia.gcr.io/catchypass/catchypass-server
+          image: asia.gcr.io/catchypass/server-prod
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
