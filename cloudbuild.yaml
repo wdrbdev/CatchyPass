@@ -2,7 +2,7 @@ steps:
   # Clone from GitHub repo
   - name: gcr.io/cloud-builders/git
     args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
-  # Build and push image
+  # Build images
   - name: "gcr.io/cloud-builders/docker"
     args:
       [
@@ -19,6 +19,15 @@ steps:
     args: ["build", "-t", "asia.gcr.io/catchypass/client-prod", "./client"]
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "asia.gcr.io/catchypass/worker-prod", "./worker"]
+  # Push images
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/mongo-prod"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/server-prod"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/client-prod"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/worker-prod"]
   # deploy to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -26,6 +35,7 @@ steps:
       - --filename=./k8s/db
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
+      - -t 10m0s
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
