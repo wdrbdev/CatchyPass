@@ -8,11 +8,11 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     kubernetes.io/ingress.global-static-ip-name: "35.229.215.0"
 spec:
-  tls:
-    - hosts:
-        - albertapp.codes
-        - www.albertapp.codes
-      secretName: albertapp.codes-com
+  # tls:
+  #   - hosts:
+  #       - albertapp.codes
+  #       - www.albertapp.codes
+  #     secretName: albertapp.codes-com
   rules:
     - host: albertapp.codes
       http:
