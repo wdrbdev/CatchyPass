@@ -5,15 +5,43 @@ steps:
   # Build and push image
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["build", "-t", "asia.gcr.io/catchypass/catchypass-server", "./server"]
-  # Push container image
+      [
+        "build",
+        "-t",
+        "asia.gcr.io/catchypass/mongo-prod",
+        "--build-arg",
+        "MONGO_INITDB_ROOT_PASSWORD=${_MONGO_PASSWORD}",
+        "./mongo",
+      ]
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "asia.gcr.io/catchypass/catchypass-server"]
+    args: ["build", "-t", "asia.gcr.io/catchypass/server-prod", "./server"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "asia.gcr.io/catchypass/client-prod", "./client"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "asia.gcr.io/catchypass/worker-prod", "./worker"]
   # deploy to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/app/server-deployment.yaml
-      - --image=asia.gcr.io/catchypass/catchypass-server
+      - --filename=./k8s/db
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/app
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/ingress-service-prod.yaml
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+images:
+  [
+    "asia.gcr.io/catchypass/mongo-prod",
+    "asia.gcr.io/catchypass/server-prod",
+    "asia.gcr.io/catchypass/client-prod",
+    "asia.gcr.io/catchypass/worker-prod",
+  ]
