@@ -1,0 +1,29 @@
+steps:
+  # Clone from GitHub repo
+  - name: gcr.io/cloud-builders/git
+    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+  - name: "ubuntu"
+    args: ["ls"]
+  # Build images
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "asia.gcr.io/catchypass/mongo-prod",
+        "--build-arg",
+        "MONGO_INITDB_ROOT_PASSWORD=${_MONGO_PASSWORD}",
+        "./mongo",
+      ]
+  # Push images
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/mongo-prod"]
+  # deploy to GKE
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/db
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+      - --timeout=10m0s
+images: ["asia.gcr.io/catchypass/mongo-prod"]
