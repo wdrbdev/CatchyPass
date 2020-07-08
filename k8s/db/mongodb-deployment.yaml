@@ -18,7 +18,7 @@ spec:
             claimName: mongodb-pvc
       containers:
         - name: mongo
-          image: asia.gcr.io/catchypass/catchypass-mongo
+          image: asia.gcr.io/catchypass/mongo-prod
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 27017
