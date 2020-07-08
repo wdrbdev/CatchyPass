@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: lightcoker/catchypass-worker
+          image: asia.gcr.io/catchypass/catchypass-worker
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8888
