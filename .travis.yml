@@ -16,7 +16,7 @@ before_install:
   - gcloud auth activate-service-account --key-file catchypass-183fad22a5a8.json
   - gcloud config set project catchypass
   - gcloud config set compute/zone asia-east1
-  - gcloud container clusters get-credentials catchypass
+  - gcloud container clusters get-credentials catchypass-cluster
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # docker build
   - docker build -t lightcoker/catchypass-clients ./client
