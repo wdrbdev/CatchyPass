@@ -17,6 +17,3 @@ steps:
       - --image=asia.gcr.io/catchypass/catchypass-server
       - --location=${_LOCATION}
       - --cluster=${_TESTING_CLUSTER}
-# Images to be pushed
-imgaes:
-  - "asia.gcr.io/catchypass/catchypass-server"
