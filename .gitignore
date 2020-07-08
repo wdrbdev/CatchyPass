@@ -2,6 +2,9 @@
 ##### Project (general)
 ####################
 script-note.sh
+*-dev.sh
+Dockerfile.dev
+get_helm.sh
 
 ####################
 ##### Node.js
