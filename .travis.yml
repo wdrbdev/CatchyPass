@@ -7,6 +7,8 @@ env:
     - SHA=$(echo -n $(date) | sha256sum)
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install libxml2-dev
   # Decryption for Travis CI
   - openssl aes-256-cbc -K $encrypted_b76db231b579_key -iv $encrypted_b76db231b579_iv -in catchypass-183fad22a5a8.json.enc -out catchypass-183fad22a5a8.json -d
   # Connect to GCP
