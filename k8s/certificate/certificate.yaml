@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: albertapp-com-tls
+spec:
+  secretName: issuer-account-key
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: albertapp.codes
+  dnsNames:
+    - albertapp.codes
+    - www.albertapp.codes
+  ipAddresses:
+    - "35.229.215.0"
+  acme:
+    config:
+      - http01:
+          ingressClass: nginx
+        domains:
+          - albertapp.codes
+          - www.albertapp.codes

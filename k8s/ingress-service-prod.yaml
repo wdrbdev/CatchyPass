@@ -12,7 +12,7 @@ spec:
     - hosts:
         - albertapp.codes
         - www.albertapp.codes
-      secretName: albertapp.codes-com
+      secretName: issuer-account-key
   rules:
     - host: albertapp.codes
       http:
