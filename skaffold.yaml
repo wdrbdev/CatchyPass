@@ -20,6 +20,14 @@ build:
         manual:
           - src: "**/*.js"
             dest: .
+    - image: lightcoker/catchypass-worker
+      context: worker
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/*.py"
+            dest: .
 deploy:
   kubectl:
     manifests:
@@ -27,3 +35,5 @@ deploy:
       - k8s/app/server-clusterip.yaml
       - k8s/app/client-deployment.yaml
       - k8s/app/client-clusterip.yaml
+      - k8s/app/worker-deployment.yaml
+      - k8s/app/worker-clusterip.yaml
