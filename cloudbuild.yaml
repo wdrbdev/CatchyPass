@@ -16,4 +16,4 @@ steps:
       - --filename=./k8s/app/server-deployment.yaml
       - --image=asia.gcr.io/catchypass/catchypass-server
       - --location=${_LOCATION}
-      - --cluster=${_TESTING_CLUSTER}
+      - --cluster=${_CLUSTER}
