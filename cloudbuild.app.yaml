@@ -1,0 +1,39 @@
+steps:
+  # Clone from GitHub repo
+  - name: gcr.io/cloud-builders/git
+    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+  # Build images
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "asia.gcr.io/catchypass/server-prod", "./server"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "asia.gcr.io/catchypass/client-prod", "./client"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "asia.gcr.io/catchypass/worker-prod", "./worker"]
+  # Push images
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/server-prod"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/client-prod"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/worker-prod"]
+  # deploy to GKE
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/app
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+      - --timeout=10m0s
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/ingress-service-prod.yaml
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+      - --timeout=10m0s
+images:
+  [
+    "asia.gcr.io/catchypass/server-prod",
+    "asia.gcr.io/catchypass/client-prod",
+    "asia.gcr.io/catchypass/worker-prod",
+  ]
