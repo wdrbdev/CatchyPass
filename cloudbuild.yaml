@@ -13,7 +13,7 @@ steps:
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename="./k8s/db/redis-deployment.yaml"
+      - --filename="./k8s/app/server-deployment.yaml"
       - --image=asia.gcr.io/catchypass/catchypass-server
       - --location=${_LOCATION}
       - --cluster=${_TESTING_CLUSTER}
