@@ -35,7 +35,7 @@ steps:
       - --filename=./k8s/db
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
-      - -t 10m0s
+      - --timeout=10m0s
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
