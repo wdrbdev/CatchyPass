@@ -14,6 +14,6 @@ steps:
     args:
       - run
       - --filename="./k8s/db/redis-deployment.yaml"
-      - --image="asia.gcr.io/catchypass/catchypass-server"
+      - --image=asia.gcr.io/catchypass/catchypass-server
       - --location=${_LOCATION}
       - --cluster=${_TESTING_CLUSTER}
