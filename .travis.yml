@@ -7,7 +7,9 @@ env:
     - SHA=$(echo -n $(date) | sha256sum)
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
-  - openssl aes-256-cbc -K $encrypted_b0327cdd0bab_key -iv $encrypted_b0327cdd0bab_iv -in catchypass-service-account.json.enc -out catchypass-service-account.json -d
+  # Decryption for Travis CI
+  - openssl aes-256-cbc -K $encrypted_852d8aedd774_key -iv $encrypted_852d8aedd774_iv -in catchypass-serviceaccount.json.enc -out catchypass-serviceaccount.json -d
+  # Connect to GCP
   - curl https://sdk.cloud.google.com | bash > /dev/null;
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
