@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     kubernetes.io/ingress.allow-http: "true"
-    kubernetes.io/ingress.global-static-ip-name: "catchypass-dns"
+    kubernetes.io/ingress.global-static-ip-name: "catchypass-global-ip"
     networking.gke.io/managed-certificates: gke-certificate
 spec:
   rules:
