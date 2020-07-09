@@ -1,5 +1,4 @@
 FROM node:alpine
-WORKDIR '/catchypass'
 
 COPY ./package*.json ./
 RUN npm install
