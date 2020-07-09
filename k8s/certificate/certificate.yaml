@@ -1,8 +1,12 @@
-apiVersion: networking.gke.io/v1beta2
-kind: ManagedCertificate
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
 metadata:
-  name: gke-certificate
+  name: certificate
+  namespace: default
 spec:
-  domains:
+  secretName: example-com-tls
+  issuerRef:
+    name: cluster-issuer
+  dnsNames:
     - albertapp.codes
     - www.albertapp.codes
