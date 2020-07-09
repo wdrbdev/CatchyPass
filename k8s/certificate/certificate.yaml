@@ -1,22 +1,8 @@
-apiVersion: cert-manager.io/v1alpha2
-kind: Certificate
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
 metadata:
-  name: albertapp-com-tls
+  name: gke-certificate
 spec:
-  secretName: issuer-account-key
-  issuerRef:
-    name: letsencrypt-staging
-    kind: ClusterIssuer
-  commonName: albertapp.codes
-  dnsNames:
+  domains:
     - albertapp.codes
     - www.albertapp.codes
-  ipAddresses:
-    - "35.229.215.0"
-  acme:
-    config:
-      - http01:
-          ingressClass: nginx
-        domains:
-          - albertapp.codes
-          - www.albertapp.codes
