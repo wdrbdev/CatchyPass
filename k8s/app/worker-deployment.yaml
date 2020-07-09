@@ -16,8 +16,6 @@ spec:
         - name: worker
           image: asia.gcr.io/catchypass/worker-prod
           imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8888
           env:
             - name: REDIS_HOST
               value: redisnodeport
