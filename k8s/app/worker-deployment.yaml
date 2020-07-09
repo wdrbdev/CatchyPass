@@ -23,3 +23,4 @@ spec:
               value: redisnodeport
             - name: REDIS_PORT
               value: "6379"
+          command: ["python", "-u", "worker.py"]
