@@ -15,24 +15,25 @@ module.exports = () => {
 
   subscriber.subscribe("sentence");
   subscriber.on("message", (channel, message) => {
-    if (channel === "sentence") {
-      console.log(`receiving message from python: ${message}`);
-    }
+    // TODO continuously receiving message and processing it
+    // if (channel === "sentence") {
+    //   console.log(`receiving message from python: ${message}`);
+    // }
   });
 
-  // Test only
-  setTimeout(() => {
-    const kwList = ["kw1", "kw2", "k2"];
-    for (let i = 1; i <= 10; i++) {
-      setTimeout(() => {
-        publisher.publish(
-          "keywords",
-          JSON.stringify({ keywords: kwList, timeStamp: i * 2 })
-        );
-        console.log("keywords published");
-      }, 8000);
-    }
-  }, 1000);
+  // Test only (for publishing message)
+  // setTimeout(() => {
+  //   const kwList = ["kw1", "kw2", "k2"];
+  //   for (let i = 1; i <= 10; i++) {
+  //     setTimeout(() => {
+  //       publisher.publish(
+  //         "keywords",
+  //         JSON.stringify({ keywords: kwList, timeStamp: i * 2 })
+  //       );
+  //       console.log("keywords published");
+  //     }, 8000);
+  //   }
+  // }, 1000);
 
   // Return all redis objects
   const redisObj = {
