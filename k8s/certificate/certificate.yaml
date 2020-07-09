@@ -4,7 +4,7 @@ metadata:
   name: certificate
   namespace: default
 spec:
-  secretName: example-com-tls
+  secretName: tls-secret
   issuerRef:
     name: cluster-issuer
   dnsNames:
