@@ -16,5 +16,3 @@ RUN jupyter nbextension enable hinterland/hinterland
 RUN jupyter nbextension enable varInspector/main
 RUN jupyter nbextension enable execute_time/ExecuteTime
 RUN jupyter nbextension enable autosavetime/main
-
-CMD ["python", "worker.py"]
