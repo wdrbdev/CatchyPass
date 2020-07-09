@@ -6,7 +6,8 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    kubernetes.io/ingress.global-static-ip-name: "35.229.215.0"
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.global-static-ip-name: "34.95.80.141"
     networking.gke.io/managed-certificates: gke-certificate
 spec:
   rules:
