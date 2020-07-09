@@ -2,11 +2,11 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
   name: certificate
-  namespace: default
 spec:
   secretName: tls-secret
   issuerRef:
     name: cluster-issuer
+    kind: ClusterIssuer
   dnsNames:
     - albertapp.codes
     - www.albertapp.codes
