@@ -15,20 +15,20 @@ spec:
         paths:
           - path: /?(.*)
             backend:
-              serviceName: client-cluster-ip
+              serviceName: client-clusterip
               servicePort: 3000
           - path: /api/?(.*)
             backend:
-              serviceName: server-cluster-ip
+              serviceName: server-clusterip
               servicePort: 5000
     - host: www.albertapp.codes
       http:
         paths:
           - path: /?(.*)
             backend:
-              serviceName: client-cluster-ip-service
+              serviceName: client-clusterip
               servicePort: 3000
           - path: /api/?(.*)
             backend:
-              serviceName: server-cluster-ip-service
+              serviceName: server-clusterip
               servicePort: 5000
