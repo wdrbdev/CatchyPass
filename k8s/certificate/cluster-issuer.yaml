@@ -15,6 +15,3 @@ spec:
             serviceAccountSecretRef:
               name: clouddns-dns01-solver-svc-acct
               key: key.json
-      - http01:
-        ingress:
-          class: nginx
