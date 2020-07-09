@@ -9,7 +9,13 @@ metadata:
     kubernetes.io/ingress.allow-http: "true"
     kubernetes.io/ingress.global-static-ip-name: "35.229.215.0"
     networking.gke.io/managed-certificates: gke-certificate
+    cert-manager.io/cluster-issuer: "cluster-issuer"
 spec:
+  tls:
+    - hosts:
+        - albertapp.codes
+        - www.albertapp.codes
+    - secretName: example-com-tls
   rules:
     - host: albertapp.codes
       http:
