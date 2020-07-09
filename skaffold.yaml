@@ -4,7 +4,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: lightcoker/catchypass-client
+    - image: asia.gcr.io/catchypass/catchypass-client
       context: client
       docker:
         dockerfile: Dockerfile
@@ -12,7 +12,7 @@ build:
         manual:
           - src: "**/*.js"
             dest: .
-    - image: lightcoker/catchypass-server
+    - image: asia.gcr.io/catchypass/catchypass-server
       context: server
       docker:
         dockerfile: Dockerfile.dev
@@ -20,7 +20,7 @@ build:
         manual:
           - src: "**/*.js"
             dest: .
-    - image: lightcoker/catchypass-worker
+    - image: asia.gcr.io/catchypass/catchypass-worker
       context: worker
       docker:
         dockerfile: Dockerfile
