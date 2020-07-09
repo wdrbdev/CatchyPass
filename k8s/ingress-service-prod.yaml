@@ -13,7 +13,7 @@ spec:
     - hosts:
         - albertapp.codes
         - www.albertapp.codes
-    - secretName: tls-secret
+      secretName: tls-secret
   rules:
     - host: albertapp.codes
       http:
