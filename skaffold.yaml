@@ -33,9 +33,9 @@ build:
 deploy:
   kubectl:
     manifests:
-      - k8s/app/server-deployment.yaml
-      - k8s/app/server-clusterip.yaml
-      - k8s/app/client-deployment.yaml
-      - k8s/app/client-clusterip.yaml
-      - k8s/app/worker-deployment.yaml
+      - k8s/deployment/server-deployment.yaml
+      - k8s/deployment/client-deployment.yaml
+      - k8s/deployment/worker-deployment.yaml
+      - k8s/service/client-clusterip.yaml
+      - k8s/service/server-clusterip.yaml
       - k8s/ingress-service-local.yaml
