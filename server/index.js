@@ -15,7 +15,7 @@ app.use(cors()); // Connect to different ports such as React
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.sendStatus("Hello there!");
+  res.send("Hello there!");
 });
 
 /*
@@ -40,7 +40,6 @@ require("./routes/dbRoutes")(app);
 require("./routes/mqRoutes")(app, redisObj);
 
 const PORT = process.env.PORT || 5000;
-
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}.`);
