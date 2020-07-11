@@ -4,6 +4,7 @@
 script-note.sh
 *-dev.sh
 get_helm.sh
+**/get_helm.sh
 .vscode
 *.tar
 
