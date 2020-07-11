@@ -1,0 +1,29 @@
+steps:
+  # Clone from GitHub repo
+  - name: gcr.io/cloud-builders/git
+    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+  # Build images
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA",
+        "./worker",
+      ]
+  # Push images
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA"]
+  # deploy to GKE - prepare & apply phase
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=./k8s/app/worker-deployment.yaml
+      - --image=asia.gcr.io/catchypass/worker-prod:$SHORT_SHA
+      - --location=${_LOCATION}
+      - --cluster=${_CLUSTER}
+      - --timeout=10m0s
+images:
+  [
+    "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA",
+  ]
