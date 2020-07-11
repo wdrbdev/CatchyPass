@@ -12,7 +12,9 @@ steps:
         "-t",
         "asia.gcr.io/catchypass/mongo-prod",
         "--build-arg",
-        "MONGO_INITDB_ROOT_PASSWORD=${_MONGO_PASSWORD}",
+        "MONGO_INITDB_ROOT_PASSWORD=${_MONGO_INITDB_ROOT_PASSWORD}",
+        "--build-arg",
+        "MONGO_PASSWORD=${_MONGO_PASSWORD}",
         "./mongo",
       ]
   # Push images
