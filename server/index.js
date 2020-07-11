@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const mongoose = require("mongoose");
+// const mongoClient = require("mongodb").MongoClient;
+// const mongoose = require("mongoose");
 
 // Import configurations and setup
 const config = require("./config");
@@ -20,6 +21,15 @@ app.get("/", (req, res) => {
 
 /*
  * Initialize MongoDB
+ */
+// const mongoUrl = `mongodb://${config.mongoHost}:${config.mongoPort}`;
+// const db = client.db(config.mongoDatabase);
+// db.addUser("mongodb","mongodb",{
+//   roles:
+// })
+
+/*
+ * Initialize Mongoose
  */
 const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`;
 // const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}`;
