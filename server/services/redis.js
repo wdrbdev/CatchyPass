@@ -1,5 +1,9 @@
 const redis = require("redis");
+const mongoose = require("mongoose");
 const config = require("../config");
+const sent2pass = require("./sent2pass");
+const Sentence = mongoose.model("Sentence");
+const Password = mongoose.model("Password");
 
 module.exports = () => {
   const client = redis.createClient({
@@ -14,11 +18,55 @@ module.exports = () => {
   const publisher = client.duplicate();
 
   subscriber.subscribe("sentence");
-  subscriber.on("message", (channel, message) => {
-    // TODO continuously receiving message and processing it
-    // if (channel === "sentence") {
-    //   console.log(`receiving message from python: ${message}`);
-    // }
+  subscriber.on("message", async (channel, message) => {
+    switch (channel) {
+      case "sentence":
+        console.log(message);
+        const { _id, status, resultSentence } = JSON.parse(message);
+        const sentence = await Sentence.findByIdAndUpdate(
+          { _id },
+          {
+            $set: {
+              resultSentence,
+              status,
+              endTime: Date.now(),
+              isCompleted: true,
+            },
+          }
+        );
+        console.log(sentence);
+        publisher.publish("password", JSON.stringify(sentence));
+        break;
+      case "password":
+        const { sentenceResult } = JSON.parse(message);
+        const resultPassword = sent2pass(sentenceResult);
+
+        const password = new Password({
+          $set: {
+            resultPassword,
+            isCompleted: true,
+            status: "testing",
+          },
+        });
+        try {
+          // Save the current data
+          await password.save();
+
+          await Sentence.findByIdAndUpdate(
+            { _id: sentenceResult._id },
+            {
+              $set: {
+                _password: password._id,
+              },
+            }
+          );
+
+          res.send(200);
+        } catch (err) {
+          res.send(400, err);
+        }
+        break;
+    }
   });
 
   // Test only (for publishing message)
