@@ -1,3 +1,11 @@
+// Grant user permission for result database
+db.createUser({
+  user: "mongo",
+  pwd: "MONGO_PASSWORD",
+  roles: ["dbOwner"],
+});
+
+// Generate seed data
 db.sentence.updateOne(
   { description: "1st seed data", isSeed: true },
   {
