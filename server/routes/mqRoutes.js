@@ -45,15 +45,10 @@ module.exports = (app, { client, subscriber, publisher }) => {
         keywords: ["111", "222", "333", "444", "555"],
       })
     );
-    const sentence = new Password({
+    const password = new Password({
       status: `test by test route ${Date.now()}`,
     });
+    await password.save();
     res.send(await Password.find({}));
-  });
-
-  app.get("/dbname", (req, res) => {
-    const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}`;
-    const db = mongoose.connect(mongoUrl, { useNewUrlParser: true });
-    res.send(db.name);
   });
 };
