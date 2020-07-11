@@ -36,25 +36,4 @@ module.exports = (app, { client, subscriber, publisher }) => {
     // TODO save password to db
     // TODO respond password generated
   });
-
-  // app.get("/test", async (req, res) => {
-  //   publisher.publish(
-  //     "keywords",
-  //     JSON.stringify({
-  //       _id: "sentence._id",
-  //       keywords: ["111", "222", "333", "444", "555"],
-  //     })
-  //   );
-  //   const sentences = new Sentence({
-  //     status: `test by test route ${Date.now()}`,
-  //   });
-  //   await sentences.save();
-  //   // const passwords = await Password.find({}, (err, docs) => {
-  //   //   console.log(docs);
-  //   // });
-  //   const s = await Sentence.find({}, (err, docs) => {
-  //     console.log(docs);
-  //   });
-  //   res.send(s);
-  // });
 };
