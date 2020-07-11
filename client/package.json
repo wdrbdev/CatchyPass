@@ -13,8 +13,8 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "start": "npm run css-build && react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build && npm run css-build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "css-build": "node-sass --omit-source-map-url src/sass/bulmastyles.scss public/css/bulmastyles.css",
