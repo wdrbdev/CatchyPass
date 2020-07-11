@@ -27,13 +27,18 @@ def sentence_result():
         if item["type"] == "message" and item["channel"].decode(
         ) == "keywords":
             # TODO actions when receiving message
-            # keywords = eval(item["data"].decode())["keywords"]
-            # d = {
-            #     "keywords": keywords,
-            #     "sentence": 'example sentence for ' + '+'.join(keywords)
-            # }
+            data = eval(item["data"].decode())
             # TODO publish message when done
-            # redis_client.publish("sentence", json.dumps(d))
+            redis_client.publish(
+                "sentence",
+                json.dumps({
+                    "_id":
+                    data["_id"],
+                    "resultSentence":
+                    "+".join(w[0] for w in data["keywords"]),
+                    "status":
+                    "testing"
+                }))
 
 
 if __name__ == '__main__':
