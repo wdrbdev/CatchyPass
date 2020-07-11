@@ -10,3 +10,4 @@ ENV MONGO_INITDB_DATABASE="Result"
 EXPOSE 27017
 COPY ./mongo-init.js /docker-entrypoint-initdb.d
 RUN sed --in-place 's/MONGO_PASSWORD/'$MONGO_PASSWORD'/g' /docker-entrypoint-initdb.d/mongo-init.js
+RUN sed --in-place 's/MONGO_INITDB_ROOT_PASSWORD/'$MONGO_INITDB_ROOT_PASSWORD'/g' /docker-entrypoint-initdb.d/mongo-init.js
