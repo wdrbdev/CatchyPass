@@ -35,4 +35,14 @@ module.exports = (app, { client, subscriber, publisher }) => {
     // TODO save password to db
     // TODO respond password generated
   });
+
+  app.get("/test", (req, res) => {
+    publisher.publish(
+      "keywords",
+      JSON.stringify({
+        _id: "sentence._id",
+        keywords: ["111", "222", "333", "444", "555"],
+      })
+    );
+  });
 };
