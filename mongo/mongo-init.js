@@ -1,6 +1,4 @@
 // Grant user permission for result database
-db.auth("root", "MONGO_INITDB_ROOT_PASSWORD");
-
 db.createUser({
   user: "mongo",
   pwd: "MONGO_PASSWORD",
