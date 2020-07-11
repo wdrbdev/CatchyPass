@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Sentence = mongoose.model("Sentence");
 const Password = mongoose.model("Password");
+const config = require("./config");
 
 module.exports = (app, { client, subscriber, publisher }) => {
   app.post("/keywords", async (req, res) => {
