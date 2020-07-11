@@ -1,4 +1,4 @@
-FROM asia.gcr.io/catchypass/tensorflow:original
+FROM tensorflow/tensorflow:latest-jupyter
 WORKDIR '/catchypass'
 COPY . .
 EXPOSE 8888
