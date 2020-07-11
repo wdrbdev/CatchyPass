@@ -18,10 +18,18 @@ spec:
             claimName: mongodb-pvc
       containers:
         - name: mongo
-          image: asia.gcr.io/catchypass/mongo-prod
+          image: registry.hub.docker.com/library/mongo
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: mongo
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongopassword
+                  key: MONGO_PASSWORD
           volumeMounts:
             - name: mongodb-persistent-storage
               mountPath: /data/db
