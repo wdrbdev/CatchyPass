@@ -6,7 +6,7 @@ steps:
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/app/redis-deployment.yaml
+      - --filename=./k8s/deployment/redis-deployment.yaml
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=10m0s
