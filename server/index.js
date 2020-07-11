@@ -21,7 +21,8 @@ app.get("/", (req, res) => {
 /*
  * Initialize MongoDB
  */
-const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`;
+// const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`;
+const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}`;
 console.log(mongoUrl);
 mongoose.connect(mongoUrl, { useNewUrlParser: true });
 // Initialize schema
