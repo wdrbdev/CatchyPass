@@ -8,4 +8,4 @@ const passwordSchema = new mongoose.Schema({
   status: String,
 });
 
-mongoose.model("password", passwordSchema);
+mongoose.model("Password", passwordSchema);
