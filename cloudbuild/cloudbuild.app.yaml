@@ -8,7 +8,7 @@ steps:
       [
         "build",
         "-t",
-        "asia.gcr.io/catchypass/server-prod$SHORT_SHA",
+        "asia.gcr.io/catchypass/server-prod:$SHORT_SHA",
         "./server",
       ]
   - name: "gcr.io/cloud-builders/docker"
@@ -16,7 +16,7 @@ steps:
       [
         "build",
         "-t",
-        "asia.gcr.io/catchypass/client-prod$SHORT_SHA",
+        "asia.gcr.io/catchypass/client-prod:$SHORT_SHA",
         "./client",
       ]
   - name: "gcr.io/cloud-builders/docker"
@@ -24,14 +24,14 @@ steps:
       [
         "build",
         "-t",
-        "asia.gcr.io/catchypass/worker-prod$SHORT_SHA",
+        "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA",
         "./worker",
       ]
   # Push images
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "asia.gcr.io/catchypass/server-prod$SHORT_SHA"]
+    args: ["push", "asia.gcr.io/catchypass/server-prod:$SHORT_SHA"]
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "asia.gcr.io/catchypass/client-prod$SHORT_SHA"]
+    args: ["push", "asia.gcr.io/catchypass/client-prod:$SHORT_SHA"]
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA"]
   # deploy to GKE - prepare phase
@@ -44,7 +44,7 @@ steps:
     args:
       - prepare
       - --filename=./k8s/app/client-deployment.yaml
-      - --image=asia.gcr.io/catchypass/worker-prod:$SHORT_SHA
+      - --image=asia.gcr.io/catchypass/client-prod:$SHORT_SHA
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - prepare
