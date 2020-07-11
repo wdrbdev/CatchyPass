@@ -1,6 +1,7 @@
 import React from "react";
 import CatchyPass from "./components/CatchyPass";
 import Header from "./components/Header";
+import "./sass/bulmastyles.scss";
 
 function App() {
   return (
