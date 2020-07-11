@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 // const mongoClient = require("mongodb").MongoClient;
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 // Import configurations and setup
 const config = require("./config");
