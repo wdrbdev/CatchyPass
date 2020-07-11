@@ -21,12 +21,9 @@ app.get("/", (req, res) => {
 /*
  * Initialize MongoDB
  */
-mongoose.connect(
-  `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`,
-  {
-    useNewUrlParser: true,
-  }
-);
+const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`;
+console.log(mongoUrl);
+mongoose.connect(mongoUrl, { useNewUrlParser: true });
 // Initialize schema
 require("./models/Password.js");
 require("./models/Sentence.js");
