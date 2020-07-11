@@ -15,27 +15,26 @@ app.use(cors()); // Connect to different ports such as React
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello there!");
+  res.sendStatus("Hello there!");
 });
 
 /*
  * Initialize MongoDB
  */
-const redisObj = require("./services/redis")();
-
-/*
- * Initialize MongoDB
- */
 mongoose.connect(
-  `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPORT}`,
+  `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDatabase}`,
   {
     useNewUrlParser: true,
   }
 );
-
-// Load schema
+// Initialize schema
 require("./models/Password.js");
 require("./models/Sentence.js");
+
+/*
+ * Initialize Redis
+ */
+const redisObj = require("./services/redis")();
 
 /*
  * Register route handlers
