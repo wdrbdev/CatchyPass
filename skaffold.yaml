@@ -4,7 +4,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: asia.gcr.io/catchypass/catchypass-client
+    - image: asia.gcr.io/catchypass/client-prod
       context: client
       docker:
         dockerfile: Dockerfile
@@ -12,7 +12,9 @@ build:
         manual:
           - src: "**/*.js"
             dest: .
-    - image: asia.gcr.io/catchypass/catchypass-server
+          - src: "**/*.scss"
+            dest: .
+    - image: asia.gcr.io/catchypass/server-prod
       context: server
       docker:
         dockerfile: Dockerfile.dev
@@ -20,7 +22,7 @@ build:
         manual:
           - src: "**/*.js"
             dest: .
-    - image: asia.gcr.io/catchypass/catchypass-worker
+    - image: asia.gcr.io/catchypass/worker-prod
       context: worker
       docker:
         dockerfile: Dockerfile
@@ -36,4 +38,4 @@ deploy:
       - k8s/app/client-deployment.yaml
       - k8s/app/client-clusterip.yaml
       - k8s/app/worker-deployment.yaml
-      - k8s/app/worker-clusterip.yaml
+      - k8s/ingress-service-local.yaml
