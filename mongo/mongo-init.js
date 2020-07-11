@@ -6,7 +6,7 @@ db.createUser({
 });
 
 // Generate seed data
-db.sentence.updateOne(
+db.Sentence.updateOne(
   { description: "1st seed data", isSeed: true },
   {
     $set: {
@@ -22,7 +22,7 @@ db.sentence.updateOne(
   }
 );
 
-db.sentence.updateOne(
+db.Sentence.updateOne(
   { description: "2nd seed data", isSeed: true },
   {
     $set: {
@@ -38,7 +38,7 @@ db.sentence.updateOne(
     upsert: true,
   }
 );
-db.sentence.updateOne(
+db.Sentence.updateOne(
   { description: "3rd seed data", isSeed: true },
   {
     $set: {
