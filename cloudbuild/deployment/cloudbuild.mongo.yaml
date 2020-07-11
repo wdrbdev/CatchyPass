@@ -8,7 +8,7 @@ steps:
       [
         "build",
         "-t",
-        "asia.gcr.io/catchypass/mongo-prod",
+        "asia.gcr.io/catchypass/mongo-prod:$SHORT_SHA",
         "--build-arg",
         "MONGO_INITDB_ROOT_PASSWORD=${_MONGO_INITDB_ROOT_PASSWORD}",
         "--build-arg",
@@ -27,7 +27,4 @@ steps:
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=10m0s
-images:
-  [
-    "asia.gcr.io/catchypass/mongo-prod:$SHORT_SHA",
-  ]
+images: ["asia.gcr.io/catchypass/mongo-prod:$SHORT_SHA"]
