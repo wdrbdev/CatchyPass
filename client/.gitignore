@@ -2,6 +2,7 @@
 ##### Project (client)
 ####################
 /public/css/bulmastyles.css
+Dockerfile.dev
 
 
 ####################
