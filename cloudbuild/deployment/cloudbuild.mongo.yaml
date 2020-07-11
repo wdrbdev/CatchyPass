@@ -26,5 +26,5 @@ steps:
       - --image=asia.gcr.io/catchypass/mongo-prod:$SHORT_SHA
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
-      - --timeout=10m0s
+      - --timeout=30m0s
 images: ["asia.gcr.io/catchypass/mongo-prod:$SHORT_SHA"]
