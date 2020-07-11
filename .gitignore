@@ -3,9 +3,9 @@
 ####################
 script-note.sh
 *-dev.sh
-Dockerfile.dev
 get_helm.sh
 .vscode
+*.tar
 
 ####################
 ##### Node.js
