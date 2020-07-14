@@ -1,15 +1,19 @@
 import React from "react";
+import { BrowserRouter, Route } from "react-router-dom";
 import CatchyPass from "./components/CatchyPass";
 import Header from "./components/Header";
+import About from "./components/About";
 import "./sass/bulmastyles.scss";
 
 function App() {
   return (
-    // <div className="App">
-    //   <Header />
-    //   <CatchyPass />
-    // </div>
-    <h1>App</h1>
+    <div>
+      <BrowserRouter>
+        <Header />
+        <Route exact={true} path="/" component={CatchyPass} />
+        <Route exact={true} path="/about" component={About} />
+      </BrowserRouter>
+    </div>
   );
 }
 
