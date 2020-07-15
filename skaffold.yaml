@@ -8,12 +8,12 @@ build:
       context: client
       docker:
         dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "**/*.js"
-            dest: .
-          - src: "**/*.scss"
-            dest: .
+      # sync:
+      #   manual:
+      #     - src: "**/*.js"
+      #       dest: .
+      #     - src: "**/*.scss"
+      #       dest: .
     - image: asia.gcr.io/catchypass/server-prod
       context: server
       docker:
