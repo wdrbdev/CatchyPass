@@ -15,12 +15,6 @@ spec:
         - www.albertapp.codes
       secretName: tls-secret
   rules:
-    - http:
-        paths:
-          - path: /mongo
-            backend:
-              serviceName: mongodbnodeport
-              servicePort: 27017
     - host: albertapp.codes
       http:
         paths:
