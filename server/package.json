@@ -26,7 +26,8 @@
     "express": "^4.17.1",
     "jest": "^26.1.0",
     "mongoose": "^5.9.21",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "use-interval": "^1.2.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
