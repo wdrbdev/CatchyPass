@@ -22,11 +22,9 @@ app.get("/", (req, res) => {
  * Initialize Mongoose
  */
 const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}`;
-console.log(mongoUrl);
 mongoose.connect(mongoUrl, { useNewUrlParser: true });
 // Initialize schema
-require("./models/Password.js");
-require("./models/Sentence.js");
+require("./models/Result.js");
 
 /*
  * Initialize Redis
