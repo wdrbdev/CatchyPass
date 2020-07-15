@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import logo from "../logo.png";
 
 const Header = () => {
@@ -10,7 +10,7 @@ const Header = () => {
     >
       <div className="navbar-brand">
         <a className="navbar-item" href="/">
-          <img src={logo} alt="CatchyPass" width="100%" height="48px" />
+          <img src={logo} alt="CatchyPass" width="auto" height="100%" />
           <strong className="is-size-4 px-1">CatchyPass</strong>
         </a>
         <div className="navbar-burger burger">
@@ -29,16 +29,10 @@ const Header = () => {
               Docs
             </a>
             <div className="navbar-dropdown">
-              <a
-                className="navbar-item"
-                href="https://bulma.io/documentation/overview/start/"
-              >
+              <a className="navbar-item" href="/tutorial">
                 Tutorial
               </a>
-              <a
-                className="navbar-item"
-                href="https://bulma.io/documentation/overview/modifiers/"
-              >
+              <a className="navbar-item" href="/about">
                 About
               </a>
             </div>
