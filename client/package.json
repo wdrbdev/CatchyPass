@@ -18,11 +18,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run css-build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "css-build": "node-sass --omit-source-map-url src/sass/bulmastyles.scss public/css/bulmastyles.css",
-    "css-watch": "npm run css-build -- --watch"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
