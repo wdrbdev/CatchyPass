@@ -1,4 +1,3 @@
 module.exports = (sentence) => {
-  const password = "";
-  return password;
+  return `password for ${sentence}`;
 };
