@@ -1,47 +1,90 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import useInterval from "use-interval";
 
-function CatchyPass() {
+const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
+  const nInput = 2;
+
   const [status, setStatus] = useState(
     "Please enter 0-2 keyword(s). \nIf no input provided, a random result would be generated."
   );
+  const [sentenceId, setSentenceId] = useState(null);
+  const [sentence, setSentence] = useState("");
+  const [password, setPassword] = useState("");
+  const [time, setTime] = useState(Date.now());
 
+  /*
+   * Check database regularly
+   */
+  useInterval(() => {
+    if (sentenceId) {
+      setTime(Date.now());
+
+      async function setResult() {
+        let res = await axios.post(
+          "/api/result",
+          {
+            _id: sentenceId,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+        setSentence(res.data.sentenceResult);
+        setPassword(res.data.passwordResult);
+      }
+      setResult();
+    }
+  }, 10000);
+
+  /*
+   * React Hook Form
+   */
   const onSubmit = async (data) => {
-    const keywords = [data.firstKeyword, data.secondKeyword];
-    // await axios.post("/api/keywords", { keywords });
+    const keywords = [];
+    for (let i = 0; i < nInput; i++) {
+      let keyword = data[`keyword ${i + 1}`];
+      keyword !== "" && keywords.push(keyword);
+    }
+    const res = await axios.post(
+      "/api/keywords",
+      { keywords },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
   };
 
-  console.log(errors);
+  // console.log(errors);
 
   const keywordsInput = (nInput) => {
     const indexArray = Array.from(Array(nInput).keys());
     return indexArray.map(function (index) {
-      let keywordId = `keyword${index + 1}`;
+      let keywordId = `keyword ${index + 1}`;
       return (
         <div className="field" key={keywordId}>
-          <input
-            type="text"
-            placeholder={keywordId}
-            name={keywordId}
-            ref={register({
-              minLength: 2,
-              maxLength: 15,
-              pattern: /[a-z]+/,
-            })}
-            className="input is-medium column is-one-quarter"
-          />
-          <p class="has-text-danger">
+          <p class="control is-expanded">
+            <input
+              type="text"
+              placeholder={keywordId}
+              name={keywordId}
+              ref={register({
+                minLength: 2,
+                maxLength: 15,
+                pattern: /[a-z]+/,
+              })}
+              className="input is-medium column is-half"
+            />
+          </p>
+          <p className="has-text-danger">
             {errors[keywordId]?.type === "minLength" &&
               "Your keyword required to be more than 2 letters"}
           </p>
-          <p class="has-text-danger">
+          <p className="has-text-danger">
             {errors[keywordId]?.type === "maxLength" &&
               "Your keyword required to be less than 15 letters"}
           </p>
-          <p class="has-text-danger">
+          <p className="has-text-danger">
             {errors[keywordId]?.type === "pattern" &&
               "Keyword should only contain lower case letter."}
           </p>
@@ -52,15 +95,44 @@ function CatchyPass() {
 
   return (
     <div className="container">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label className="has-text-weight-bold">
-          Keywords for password generation
-        </label>
-        {keywordsInput(2)}
-        <input type="submit" className="button is-info" />
-      </form>
-      <div>Status: {status}</div>
+      <div className="columns">
+        <div className="column mt-2">
+          <div className="title is-3">Keywords for password generation</div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {keywordsInput(nInput)}
+            <input type="submit" className="button is-info" />
+          </form>
+        </div>
+
+        <div className="column mt-2">
+          <div>
+            <article className="message">
+              <div className="message-header">Status:</div>
+              <div className="message-body">{status}</div>
+            </article>
+          </div>
+          <br />
+          <div>
+            <article className="message is-link">
+              <div className="message-header">Sentence:</div>
+              <div className="message-body">
+                {JSON.stringify(sentence).slice(1, -1)}
+              </div>
+            </article>
+          </div>
+          <br />
+          <div>
+            <article className="message is-link">
+              <div className="message-header">Password:</div>
+              <div className="message-body">
+                {JSON.stringify(password).slice(1, -1)}
+              </div>
+            </article>
+          </div>
+          <div hidden>Current time: {time}</div>
+        </div>
+      </div>
     </div>
   );
-}
+};
 export default CatchyPass;
