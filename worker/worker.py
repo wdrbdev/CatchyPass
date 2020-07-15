@@ -32,12 +32,10 @@ def sentence_result():
             redis_client.publish(
                 "sentence",
                 json.dumps({
-                    "_id":
-                    data["_id"],
-                    "resultSentence":
-                    "+".join(w[0] for w in data["keywords"]),
-                    "status":
-                    "testing"
+                    "_id": data["_id"],
+                    "sentenceResult":
+                    f"sentence from {'+'.join(w for w in data['keywords'])}",
+                    "status": "testing"
                 }))
 
 
