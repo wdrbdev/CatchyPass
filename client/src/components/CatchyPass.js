@@ -13,6 +13,7 @@ const CatchyPass = () => {
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState("");
 
   /*
    * Check database regularly
@@ -29,6 +30,10 @@ const CatchyPass = () => {
         );
         setSentence(res.data.sentenceResult);
         setPassword(res.data.passwordResult);
+        if (res.data.passwordResult !== "") {
+          setStatus("Password result is generated.");
+          setIsLoading("");
+        }
       }
       setResult();
     }
@@ -50,6 +55,7 @@ const CatchyPass = () => {
     );
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
+    setIsLoading("is-loading");
   };
 
   // console.log(errors);
@@ -97,7 +103,9 @@ const CatchyPass = () => {
           <div className="title is-3">Keywords for password generation</div>
           <form onSubmit={handleSubmit(onSubmit)}>
             {keywordsInput(nInput)}
-            <input type="submit" className="button is-info" />
+            <button type="submit" className={`button is-info ${isLoading}`}>
+              Submit
+            </button>
           </form>
         </div>
 
