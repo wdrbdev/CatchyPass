@@ -22,10 +22,7 @@ const Header = () => {
       <div className="navbar-menu">
         <div className="navbar-start">
           <div className="navbar-item has-dropdown is-hoverable">
-            <a
-              className="navbar-link"
-              href="https://bulma.io/documentation/overview/start/"
-            >
+            <a className="navbar-link" href="#">
               Docs
             </a>
             <div className="navbar-dropdown">
