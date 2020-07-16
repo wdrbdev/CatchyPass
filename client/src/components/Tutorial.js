@@ -1,7 +1,11 @@
 import React from "react";
 
-const About = () => {
-  return <div>Tutorial</div>;
+const Tutorial = () => {
+  return (
+    <div className="container">
+      <div className="title">Tutorial</div>
+    </div>
+  );
 };
 
-export default About;
+export default Tutorial;
