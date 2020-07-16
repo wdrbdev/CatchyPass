@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
@@ -13,15 +13,12 @@ const CatchyPass = () => {
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("");
   const [password, setPassword] = useState("");
-  const [time, setTime] = useState(Date.now());
 
   /*
    * Check database regularly
    */
   useInterval(() => {
     if (sentenceId) {
-      setTime(Date.now());
-
       async function setResult() {
         let res = await axios.post(
           "/api/result",
@@ -129,7 +126,6 @@ const CatchyPass = () => {
               </div>
             </article>
           </div>
-          <div hidden>Current time: {time}</div>
         </div>
       </div>
     </div>
