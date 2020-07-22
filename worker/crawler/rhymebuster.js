@@ -2,6 +2,8 @@
 
 const puppeteer = require("puppeteer");
 const fs = require("fs");
+const chalk = require("chalk");
+const hr = "-".repeat(process.stdout.columns) + "\n";
 
 const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -15,12 +17,15 @@ const getSentences = async (
   exit = true
 ) => {
   const url = "https://www.rhymebuster.com/rapgenerator";
-  console.log(`Starting retrieving ${nIteration} data from:`);
-  console.log("%j\n", {
-    url,
-    genres,
-    rhymeScheme,
-  });
+  console.log(
+    chalk.green(
+      `Starting retrieving ${nIteration} data from:\n${JSON.stringify({
+        url,
+        genres,
+        rhymeScheme,
+      })}\n`
+    )
+  );
 
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
@@ -37,7 +42,7 @@ const getSentences = async (
     try {
       await page.waitFor(".songLine");
     } catch (error) {
-      console.log(error);
+      console.log(chalk.red(`${hr}Error in getSentences: ${error}\n${hr}`));
       await page.click("button#clearSong");
       await page.click("button#bustFurther");
       i--;
@@ -66,12 +71,11 @@ const getSentences = async (
     console.log(`Sentence = ${sentence}\n`);
     await page.click("button#clearSong");
 
-    sleep(500);
+    sleep(20);
   }
 
   const jsonString = JSON.stringify(sentences);
-  console.log(`End result:\n${jsonString}`);
-
+  console.log(`Finishing retrieval of ${nIteration} data\n`);
   fs.writeFileSync(fileName, jsonString);
   await browser.close();
 
@@ -84,17 +88,26 @@ const getSentences = async (
   const batchSize = 50;
   const round = ~~(totalIteration / batchSize);
   for (let i = 0; i < round; i++) {
-    await getSentences(
-      "song:rap",
-      "couplet",
-      batchSize,
-      `rhymebuster-${i}.json`,
-      false
-    );
-    console.log("\n##############################");
+    try {
+      await getSentences(
+        "song:rap",
+        "couplet",
+        batchSize,
+        `rhymebuster-${i}.json`,
+        false
+      );
+    } catch (error) {
+      console.log(chalk.red(`${hr}Error in totalIteration: ${error}\n${hr}`));
+      i--;
+      continue;
+    }
     console.log(
-      `Reprieving ${batchSize} data (${batchSize * (i + 1)}/${totalIteration})`
+      chalk.greenBright(
+        `${hr}Finishing reprieving ${
+          batchSize * (i + 1)
+        }/${totalIteration} data\n${hr}`
+      )
     );
-    console.log("##############################\n");
   }
-})(10000);
+  process.exit(0);
+})(150000);
