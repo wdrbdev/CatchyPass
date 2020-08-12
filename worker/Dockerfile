@@ -1,8 +1,15 @@
 FROM tensorflow/tensorflow:latest-jupyter
 WORKDIR '/catchypass'
 COPY . .
-RUN ls
-RUN cd ./data/catchypass/trained_model && ls
+
+# Install Git LFS to download model
+RUN url -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN apt-get install git-lfs
+RUN git lfs install
+RUN git clone https://github.com/lightcoker/CatchyPass.git
+RUN mv -f CatchyPass/worker/data .
+RUN cp -r CatchyPass/worker/data .
+
 EXPOSE 8888
 
 RUN /usr/bin/python3 -m pip install --upgrade pip && \
