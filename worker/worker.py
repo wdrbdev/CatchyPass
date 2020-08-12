@@ -68,8 +68,7 @@ def sentence_result():
 
 if __name__ == '__main__':
     print("Worker starts")
-    # pubsub_thread = Thread(target=sentence_result, args=())
-    # pubsub_thread.start()
-    # pubsub_thread.join()
-    keyword2text('flower')
+    pubsub_thread = Thread(target=sentence_result, args=())
+    pubsub_thread.start()
+    pubsub_thread.join()
     print("Worker terminates")
