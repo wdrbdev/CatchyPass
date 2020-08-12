@@ -1,3 +1,2 @@
-/Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/data/catchypass/trained_model/model.tar.gz filter=lfs diff=lfs merge=lfs -text
 /Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/data/catchypass/trained_model/pytorch_model.bin filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
