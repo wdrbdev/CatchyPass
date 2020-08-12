@@ -121,7 +121,7 @@ const CatchyPass = () => {
             <article className="message is-link">
               <div className="message-header">Sentence:</div>
               <div className="message-body">
-                {JSON.stringify(sentence).slice(1, -1)}
+                {`${JSON.stringify(sentence).slice(1, -1)}`}
               </div>
             </article>
           </div>
@@ -130,7 +130,7 @@ const CatchyPass = () => {
             <article className="message is-link">
               <div className="message-header">Password:</div>
               <div className="message-body">
-                {JSON.stringify(password).slice(1, -1)}
+                {`${JSON.stringify(password).slice(1, -1)}`}
               </div>
             </article>
           </div>
