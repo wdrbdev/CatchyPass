@@ -1,6 +1,8 @@
 FROM tensorflow/tensorflow:latest-jupyter
 WORKDIR '/catchypass'
 COPY . .
+RUN ls
+RUN cd cd ./data/catchypass/trained_model && ls
 EXPOSE 8888
 
 RUN /usr/bin/python3 -m pip install --upgrade pip && \
