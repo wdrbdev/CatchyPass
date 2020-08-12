@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
-import renderHTML from "react-render-html";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
@@ -131,7 +130,7 @@ const CatchyPass = () => {
             <article className="message is-link">
               <div className="message-header">Password:</div>
               <div className="message-body">
-                {renderHTML(JSON.stringify(password).slice(1, -1))}
+                {JSON.stringify(password).slice(1, -1)}
               </div>
             </article>
           </div>
