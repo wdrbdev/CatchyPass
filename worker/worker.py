@@ -37,7 +37,7 @@ def keyword2text(keywords):
                             temperature=1.0,
                             return_as_list=True)
         for text in texts:
-            text = text.replace("<|n|>", "\n")
+            text = text.replace(" <|n|> ", "\n")
             if text.lower().find(keyword) is not -1:
                 return text.replace(prefix + " ", "")
         retry_count = retry_count + 1
