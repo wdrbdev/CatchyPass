@@ -25,10 +25,10 @@ model_path = './data/catchypass/trained_model/pytorch_model.bin'
 ai = aitextgen(model=model_path, config=config_path, to_gpu=False)
 
 
-def keyword2text(keyword):
+def keyword2text(keywords):
+    keyword = " ".join(keywords).lower()
     N_RETRY = 1
     retry_count = 0
-    keyword = keyword.lower()
     prefix = f'@{keyword}~:'
     while retry_count <= N_RETRY:
         texts = ai.generate(n=3,
