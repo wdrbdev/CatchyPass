@@ -7,7 +7,6 @@ RUN url -s https://packagecloud.io/install/repositories/github/git-lfs/script.de
 RUN apt-get install git-lfs
 RUN git lfs install
 RUN git clone https://github.com/lightcoker/CatchyPass.git
-RUN mv -f CatchyPass/worker/data .
 RUN cp -r CatchyPass/worker/data .
 
 EXPOSE 8888
