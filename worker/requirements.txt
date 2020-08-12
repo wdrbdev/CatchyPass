@@ -7,3 +7,8 @@ argh
 jupyterthemes
 jupyter_contrib_nbextensions
 yapf
+
+# For aitextgen
+transformers==2.9.1
+aitextgen
+comet-ml
