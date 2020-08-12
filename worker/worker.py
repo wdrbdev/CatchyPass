@@ -2,7 +2,6 @@ import os
 import time
 import redis
 import json
-from threading import Thread
 from aitextgen import aitextgen
 
 # Get env vars
@@ -28,23 +27,20 @@ ai = aitextgen(model=model_path, config=config_path, to_gpu=False)
 def keyword2text(keyword):
     N_RETRY = 1
     retry_count = 0
-    keyword = keyword.lower()
+
     prefix = f'@{keyword}~:'
     while retry_count <= N_RETRY:
         texts = ai.generate(n=3,
+                            batch_size=3,
                             prompt=prefix,
                             max_length=256,
-                            temperature=1.0,
-                            return_as_list=True)
+                            temperature=1.0)
         for text in texts:
             text = text.replace("<|n|>", "\n")
-            if text.lower().find(keyword) is not -1:
-                return text.replace(prefix + " ", "")
+            if text.find(keyword) is not -1:
+                return text
         retry_count = retry_count + 1
-
-    text = ai.generate(n=1, prompt=prefix, max_length=256,
-                       return_as_list=True)[0]
-    return text.replace(prefix + " ", "")
+    return ai.generate(n=1, prompt=prefix, max_length=256, temperature=1.0)
 
 
 def sentence_result():
@@ -68,8 +64,8 @@ def sentence_result():
 
 if __name__ == '__main__':
     print("Worker starts")
-    # pubsub_thread = Thread(target=sentence_result, args=())
-    # pubsub_thread.start()
-    # pubsub_thread.join()
-    keyword2text('flower')
+    pubsub_thread = Thread(target=sentence_result, args=())
+    pubsub_thread.start()
+    pubsub_thread.join()
+
     print("Worker terminates")
