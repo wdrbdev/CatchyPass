@@ -2,7 +2,7 @@ import os
 import time
 import redis
 import json
-from threading import Thread
+from aitextgen import aitextgen
 
 # Get env vars
 REDIS_HOST = os.environ['REDIS_HOST']
@@ -17,6 +17,30 @@ pubsub.subscribe("keywords")
 # test only
 pubsub_sen = redis_client.pubsub()
 pubsub_sen.subscribe(["sentence"])
+
+# Initialize aitextgen
+config_path = './data/catchypass/trained_model/config.json'
+model_path = './data/catchypass/trained_model/pytorch_model.bin'
+ai = aitextgen(model=model_path, config=config_path, to_gpu=False)
+
+
+def keyword2text(keyword):
+    N_RETRY = 1
+    retry_count = 0
+
+    prefix = f'@{keyword}~:'
+    while retry_count <= N_RETRY:
+        texts = ai.generate(n=3,
+                            batch_size=3,
+                            prompt=prefix,
+                            max_length=256,
+                            temperature=1.0)
+        for text in texts:
+            text = text.replace("<|n|>", "\n")
+            if text.find(keyword) is not -1:
+                return text
+        retry_count = retry_count + 1
+    return ai.generate(n=1, prompt=prefix, max_length=256, temperature=1.0)
 
 
 def sentence_result():
@@ -33,8 +57,7 @@ def sentence_result():
                 "sentence",
                 json.dumps({
                     "_id": data["_id"],
-                    "sentenceResult":
-                    f"sentence from {'+'.join(w for w in data['keywords'])}",
+                    "sentenceResult": keyword2text(data['keywords']),
                     "status": "testing"
                 }))
 
