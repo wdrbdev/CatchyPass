@@ -22,5 +22,6 @@ steps:
       - --image=asia.gcr.io/catchypass/worker-prod:$SHORT_SHA
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
-      - --timeout=30m0s
+      - --timeout=20m0s
 images: ["asia.gcr.io/catchypass/worker-prod:$SHORT_SHA"]
+timeout: 30m0s

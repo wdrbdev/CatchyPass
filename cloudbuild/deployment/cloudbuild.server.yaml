@@ -27,3 +27,4 @@ images:
   [
     "asia.gcr.io/catchypass/server-prod:$SHORT_SHA",
   ]
+timeout: 30m0s

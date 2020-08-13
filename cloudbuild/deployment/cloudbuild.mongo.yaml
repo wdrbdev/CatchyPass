@@ -10,3 +10,4 @@ steps:
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=30m0s
+timeout: 30m0s
