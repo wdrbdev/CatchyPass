@@ -11,8 +11,8 @@ const CatchyPass = () => {
     "Please enter 0-2 keyword(s). \nIf no input provided, a random result would be generated."
   );
   const [sentenceId, setSentenceId] = useState(null);
-  const [sentence, setSentence] = useState("");
-  const [password, setPassword] = useState("");
+  const [sentence, setSentence] = useState(" \n ");
+  const [password, setPassword] = useState(" \n ");
   const [isLoading, setIsLoading] = useState("");
 
   /*
@@ -120,8 +120,11 @@ const CatchyPass = () => {
           <div>
             <article className="message is-link">
               <div className="message-header">Sentence:</div>
-              <div className="message-body">
-                {`${JSON.stringify(sentence).slice(1, -1)}`}
+              <div
+                className="message-body"
+                style={{ "white-space": "pre-line" }}
+              >
+                {sentence.slice(1, -1)}
               </div>
             </article>
           </div>
@@ -129,8 +132,11 @@ const CatchyPass = () => {
           <div>
             <article className="message is-link">
               <div className="message-header">Password:</div>
-              <div className="message-body">
-                {`${JSON.stringify(password).slice(1, -1)}`}
+              <div
+                className="message-body"
+                style={{ "white-space": "pre-line" }}
+              >
+                {password.slice(1, -1)}
               </div>
             </article>
           </div>
