@@ -5,7 +5,7 @@ import useInterval from "use-interval";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
-  const nInput = 2;
+  const nInput = 1;
 
   const [status, setStatus] = useState(
     "Please enter 0-2 keyword(s). \nIf no input provided, a random result would be generated."
