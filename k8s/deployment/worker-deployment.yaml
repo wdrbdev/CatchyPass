@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: asia.gcr.io/catchypass/worker-prod
+          image: asia.gcr.io/catchypass-dev/worker-prod
           imagePullPolicy: IfNotPresent
           env:
             - name: REDIS_HOST
