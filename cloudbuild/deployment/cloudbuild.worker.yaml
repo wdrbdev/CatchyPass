@@ -19,7 +19,7 @@ steps:
     args:
       - run
       - --filename=./k8s/deployment/worker-deployment.yaml
-      - --image=asia.gcr.io/catchypass/worker-prod:$SHORT_SHA
+      - --image=asia.gcr.io/catchypass-dev/worker-prod:$SHORT_SHA
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=20m0s
