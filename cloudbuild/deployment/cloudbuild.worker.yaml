@@ -8,12 +8,12 @@ steps:
       [
         "build",
         "-t",
-        "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA",
+        "asia.gcr.io/catchypass-dev/worker-prod:$SHORT_SHA",
         "./worker",
       ]
   # Push images
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "asia.gcr.io/catchypass/worker-prod:$SHORT_SHA"]
+    args: ["push", "asia.gcr.io/catchypass-dev/worker-prod:$SHORT_SHA"]
   # deploy to GKE - prepare & apply phase
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -23,5 +23,5 @@ steps:
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=20m0s
-images: ["asia.gcr.io/catchypass/worker-prod:$SHORT_SHA"]
+images: ["asia.gcr.io/catchypass-dev/worker-prod:$SHORT_SHA"]
 timeout: 30m0s
