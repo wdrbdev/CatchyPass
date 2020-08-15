@@ -29,10 +29,10 @@ const CatchyPass = () => {
           { headers: { "Content-Type": "application/json" } }
         );
         setSentence(res.data.sentenceResult || "\n");
-        setPassword(res.data.passwordResult || "\n");
         if (res.data.passwordResult !== "") {
           setStatus("Password result is generated.");
           setIsLoading("");
+          setPassword(res.data.passwordResult || "\n");
         }
       }
       setResult();
@@ -72,7 +72,7 @@ const CatchyPass = () => {
               placeholder={keywordId}
               name={keywordId}
               ref={register({
-                minLength: 2,
+                minLength: 3,
                 maxLength: 15,
                 pattern: /[a-z]+/,
               })}
