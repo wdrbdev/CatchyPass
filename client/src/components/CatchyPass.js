@@ -28,8 +28,8 @@ const CatchyPass = () => {
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        setSentence(res.data.sentenceResult);
-        setPassword(res.data.passwordResult);
+        setSentence(res.data.sentenceResult || "\n");
+        setPassword(res.data.passwordResult || "\n");
         if (res.data.passwordResult !== "") {
           setStatus("Password result is generated.");
           setIsLoading("");
@@ -119,7 +119,7 @@ const CatchyPass = () => {
           <br />
           <div>
             <article className="message is-link">
-              <div className="message-header">Sentence:</div>
+              <div className="message-header">Limerick Result:</div>
               <div
                 className="message-body"
                 style={{ "white-space": "pre-line" }}
@@ -131,7 +131,7 @@ const CatchyPass = () => {
           <br />
           <div>
             <article className="message is-link">
-              <div className="message-header">Password:</div>
+              <div className="message-header">Password Result:</div>
               <div
                 className="message-body"
                 style={{ "white-space": "pre-line" }}
