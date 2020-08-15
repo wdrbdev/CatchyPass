@@ -33,8 +33,8 @@ module.exports = () => {
 
   subscriber.on("message", async (channel, message) => {
     if (channel === "password") {
-      let { _id, sentenceResult } = JSON.parse(message);
-      let passwordResult = sent2pass(sentenceResult);
+      let { _id, sentenceResult, keywords } = JSON.parse(message);
+      let passwordResult = sent2pass(sentenceResult, keywords);
       await Result.findByIdAndUpdate(_id, {
         $set: {
           passwordResult,

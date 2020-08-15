@@ -1,6 +1,6 @@
 module.exports = (
   sentences,
-  keyword,
+  keywords,
   delimiter = "",
   toLeet = true,
   wordIndex = -1,
@@ -34,16 +34,18 @@ module.exports = (
     });
 
   if (toLeet) {
-    keyword = keyword
-      .split("")
-      .map((c) => {
-        if (c in LEET_DICT) return LEET_DICT[c];
-        return c;
-      })
-      .join("");
+    keywords = keywords.map((keyword) => {
+      return keyword
+        .split("")
+        .map((c) => {
+          if (c in LEET_DICT) return LEET_DICT[c];
+          return c;
+        })
+        .join("");
+    });
   }
-  
-  return [keyword, ...words]
+
+  return [...keywords, ...words]
     .flat(1)
     .map((word) => {
       return word.charAt(0).toUpperCase() + word.slice(1);
