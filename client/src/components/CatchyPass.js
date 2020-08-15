@@ -29,10 +29,11 @@ const CatchyPass = () => {
           { headers: { "Content-Type": "application/json" } }
         );
         setSentence(res.data.sentenceResult || "\n");
-        if (res.data.passwordResult !== "") {
+        setPassword(res.data.passwordResult || "\n");
+
+        if (res.data.passwordResult !== "\n") {
           setStatus("Password result is generated.");
           setIsLoading("");
-          setPassword(res.data.passwordResult || "\n");
         }
       }
       setResult();
