@@ -70,13 +70,14 @@ const CatchyPass = () => {
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
 
-    setIntervalTime(INTERVAL_TIME);
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
 
     setSentence("\n");
     setPassword("\n");
+    setIntervalTime(INTERVAL_TIME);
+    setPasswordResult([]);
   };
 
   const keywordsInput = (nInput) => {
@@ -93,7 +94,7 @@ const CatchyPass = () => {
               ref={register({
                 minLength: 3,
                 maxLength: 15,
-                pattern: /[a-z]+/,
+                pattern: /^[a-z]+$/,
               })}
               className="input is-medium column is-half"
             />
