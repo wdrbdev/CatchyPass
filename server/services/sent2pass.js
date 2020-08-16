@@ -36,6 +36,7 @@ module.exports = (
   if (toLeet) {
     keywords = keywords.map((keyword) => {
       return keyword
+        .toLowerCase()
         .split("")
         .map((c) => {
           if (c in LEET_DICT) return LEET_DICT[c];
