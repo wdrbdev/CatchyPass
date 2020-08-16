@@ -7,6 +7,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
   const nInput = 1;
+  const INTERVAL_TIME = 2000;
 
   const [status, setStatus] = useState(
     "Please enter 0-2 keyword(s). \nIf no input provided, a random result would be generated."
@@ -16,7 +17,7 @@ const CatchyPass = () => {
   const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
-  const [intervalTime, setIntervalTime] = useState(2000);
+  const [intervalTime, setIntervalTime] = useState(INTERVAL_TIME);
 
   /*
    * Check database regularly
@@ -66,6 +67,7 @@ const CatchyPass = () => {
     document.getElementById("dropdown").classList.add("is-hidden");
     document.getElementById("copy-btn").classList.add("is-hidden");
 
+    setIntervalTime(INTERVAL_TIME);
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
