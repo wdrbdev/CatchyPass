@@ -13,7 +13,7 @@ const CatchyPass = () => {
   );
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("\n");
-  const [password, setPassword] = useState("d");
+  const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
   const [intervalTime, setIntervalTime] = useState(2000);
@@ -64,6 +64,7 @@ const CatchyPass = () => {
       { headers: { "Content-Type": "application/json" } }
     );
     document.getElementById("dropdown").classList.add("is-hidden");
+    document.getElementById("copy-btn").classList.add("is-hidden");
 
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
@@ -131,7 +132,11 @@ const CatchyPass = () => {
       document.getElementById(
         "dropdown-info"
       ).innerHTML = document.getElementById(sourceId).innerHTML;
-      //TODO remove is-active when click and add to another
+      ["password-uppercase", "password-number", "password-character"].map(
+        (pswId) => {
+          document.getElementById(pswId).classList.toggle("is-active");
+        }
+      );
       setPassword(passwordResult[pswIndex]);
       dropdownBtnOnClick();
     };
