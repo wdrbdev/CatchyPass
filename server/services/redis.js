@@ -21,12 +21,16 @@ module.exports = () => {
   subscriber.on("message", async (channel, message) => {
     if (channel === "sentence") {
       let { _id, status, sentenceResult } = JSON.parse(message);
-      let sentence = await Result.findByIdAndUpdate(_id, {
-        $set: {
-          sentenceResult,
-          status,
+      let sentence = await Result.findByIdAndUpdate(
+        _id,
+        {
+          $set: {
+            sentenceResult,
+            status,
+          },
         },
-      });
+        { new: true }
+      );
       publisher.publish("password", JSON.stringify(sentence));
     }
   });
@@ -35,12 +39,16 @@ module.exports = () => {
     if (channel === "password") {
       let { _id, sentenceResult, keywords } = JSON.parse(message);
       let passwordResult = sent2pass(sentenceResult, keywords);
-      await Result.findByIdAndUpdate(_id, {
-        $set: {
-          passwordResult,
-          endTime: Date.now(),
+      await Result.findByIdAndUpdate(
+        _id,
+        {
+          $set: {
+            passwordResult,
+            endTime: Date.now(),
+          },
         },
-      });
+        { new: true }
+      );
     }
   });
 
