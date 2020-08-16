@@ -34,11 +34,14 @@ module.exports = () => {
       publisher.publish("password", JSON.stringify(sentence));
     }
   });
-
   subscriber.on("message", async (channel, message) => {
     if (channel === "password") {
       let { _id, sentenceResult, keywords } = JSON.parse(message);
-      let passwordResult = sent2pass(sentenceResult, keywords);
+      let passwordResult = [
+        sent2pass(sentenceResult, keywords, "", false), // Only upper case
+        sent2pass(sentenceResult, keywords), // Upper case and number
+        sent2pass(sentenceResult, keywords, "."), // Upper case ,number and special characters
+      ];
       await Result.findByIdAndUpdate(
         _id,
         {

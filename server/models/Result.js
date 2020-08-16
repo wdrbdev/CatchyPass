@@ -5,7 +5,7 @@ const resultSchema = new mongoose.Schema({
   startTime: { type: Date, default: Date.now() },
   endTime: Date,
   sentenceResult: { type: String, default: "" },
-  passwordResult: { type: String, default: "" },
+  passwordResult: [{ type: String, default: "" }],
   isSeed: { type: Boolean, default: false },
   status: String,
   description: String,
