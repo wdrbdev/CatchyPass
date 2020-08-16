@@ -222,7 +222,7 @@ const CatchyPass = () => {
                 style={{ whiteSpace: "pre-line" }}
               >
                 <div id="dropdown" className="is-hidden">
-                  {dropdown}
+                  {dropdown()}
                 </div>
                 <div>{password}</div>
               </div>
