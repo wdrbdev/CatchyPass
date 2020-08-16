@@ -37,7 +37,7 @@ const CatchyPass = () => {
 
         if (passwordResult.length > 0) {
           document.getElementById("dropdown").classList.remove("is-hidden");
-          document.getElementById("copy-btn").classList.remove("is-hidden");
+          document.querySelector(".copy-btn").classList.remove("is-hidden");
 
           setStatus("Password result is generated.");
           setIsLoading("");
@@ -66,7 +66,8 @@ const CatchyPass = () => {
     );
     document.getElementById("dropdown").classList.add("is-hidden");
     document.getElementById("dropdown").classList.remove("is-active");
-    document.getElementById("copy-btn").classList.add("is-hidden");
+    document.querySelector(".copy-btn").classList.add("is-hidden");
+
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
 
@@ -220,10 +221,17 @@ const CatchyPass = () => {
               <div className="message-header">Limerick Result:</div>
               <div
                 id="limerick-result"
-                className="message-body"
+                className="message-body columns"
                 style={{ whiteSpace: "pre-line" }}
               >
-                {sentence}
+                <div className="column is-11">{sentence}</div>
+                <div className="column is-1">
+                  <CopyToClipboard text={sentence}>
+                    <button className="copy-btn button is-right is-small is-hidden">
+                      <i className="fas fa-copy"></i>
+                    </button>
+                  </CopyToClipboard>
+                </div>
               </div>
             </article>
           </div>
@@ -245,10 +253,7 @@ const CatchyPass = () => {
                   <div className="column is-11">{password}</div>
                   <div className="column is-1">
                     <CopyToClipboard text={password}>
-                      <button
-                        id="copy-btn"
-                        className="button is-right is-small is-hidden"
-                      >
+                      <button className="copy-btn button is-right is-small is-hidden">
                         <i className="fas fa-copy"></i>
                       </button>
                     </CopyToClipboard>
