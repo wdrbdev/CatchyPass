@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
@@ -12,7 +13,7 @@ const CatchyPass = () => {
   );
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("\n");
-  const [password, setPassword] = useState("\n");
+  const [password, setPassword] = useState("d");
   const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
   const [intervalTime, setIntervalTime] = useState(2000);
@@ -35,6 +36,7 @@ const CatchyPass = () => {
 
         if (passwordResult.length > 0) {
           document.getElementById("dropdown").classList.remove("is-hidden");
+          document.getElementById("copy-btn").classList.remove("is-hidden");
 
           setStatus("Password result is generated.");
           setIsLoading("");
@@ -115,13 +117,13 @@ const CatchyPass = () => {
       const sourceId = event.target.id;
       let pswIndex = 1;
       switch (sourceId) {
-        case "password-character":
+        case "password-uppercase":
           pswIndex = 0;
           break;
         case "password-number":
           pswIndex = 1;
           break;
-        case "password-uppercase":
+        case "password-character":
           pswIndex = 2;
           break;
       }
@@ -129,12 +131,13 @@ const CatchyPass = () => {
       document.getElementById(
         "dropdown-info"
       ).innerHTML = document.getElementById(sourceId).innerHTML;
+      //TODO remove is-active when click and add to another
       setPassword(passwordResult[pswIndex]);
       dropdownBtnOnClick();
     };
 
     return (
-      <div className="dropdown">
+      <div className="dropdown is-right">
         <div className="dropdown-trigger" onClick={dropdownBtnOnClick}>
           <button
             className="button"
@@ -215,16 +218,30 @@ const CatchyPass = () => {
           <br />
           <div>
             <article className="message is-link">
-              <div className="message-header">Password Result:</div>
+              <div className="message-header">
+                Password Result:
+                <span id="dropdown" className="is-hidden">
+                  {dropdown()}
+                </span>
+              </div>
               <div
                 id="psw-result"
                 className="message-body"
                 style={{ whiteSpace: "pre-line" }}
               >
-                <div id="dropdown" className="is-hidden">
-                  {dropdown()}
+                <div id="password" className="columns">
+                  <div className="column is-11">{password}</div>
+                  <div className="column is-1">
+                    <CopyToClipboard text={password}>
+                      <button
+                        id="copy-btn"
+                        className="button is-right is-small is-hidden"
+                      >
+                        <i className="fas fa-copy"></i>
+                      </button>
+                    </CopyToClipboard>
+                  </div>
                 </div>
-                <div>{password}</div>
               </div>
             </article>
           </div>
