@@ -37,7 +37,9 @@ const CatchyPass = () => {
 
         if (passwordResult.length > 0) {
           document.getElementById("dropdown").classList.remove("is-hidden");
-          document.querySelector(".copy-btn").classList.remove("is-hidden");
+          document.querySelectorAll(".copy-btn").forEach((elem) => {
+            elem.classList.remove("is-hidden");
+          });
 
           setStatus("Password result is generated.");
           setIsLoading("");
@@ -66,8 +68,9 @@ const CatchyPass = () => {
     );
     document.getElementById("dropdown").classList.add("is-hidden");
     document.getElementById("dropdown").classList.remove("is-active");
-    document.querySelector(".copy-btn").classList.add("is-hidden");
-
+    document.querySelectorAll(".copy-btn").forEach((elem) => {
+      elem.classList.add("is-hidden");
+    });
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
 
