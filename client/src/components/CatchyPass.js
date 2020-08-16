@@ -32,7 +32,8 @@ const CatchyPass = () => {
         );
         setSentence(res.data.sentenceResult || "\n");
         setPasswordResult(res.data.passwordResult || []);
-        if (passwordResult.length >= 0) {
+        
+        if (passwordResult.length > 0) {
           setStatus("Password result is generated.");
           setIsLoading("");
 
