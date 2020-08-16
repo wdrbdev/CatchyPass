@@ -15,7 +15,7 @@ const CatchyPass = () => {
   const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
-  const [intervalTime, setIntervalTime] = useState(10000);
+  const [intervalTime, setIntervalTime] = useState(2000);
 
   /*
    * Check database regularly
@@ -32,8 +32,10 @@ const CatchyPass = () => {
         );
         setSentence(res.data.sentenceResult || "\n");
         setPasswordResult(res.data.passwordResult || []);
-        
+
         if (passwordResult.length > 0) {
+          document.getElementById("dropdown").classList.remove("is-hidden");
+
           setStatus("Password result is generated.");
           setIsLoading("");
 
@@ -59,6 +61,8 @@ const CatchyPass = () => {
       { keywords },
       { headers: { "Content-Type": "application/json" } }
     );
+    document.getElementById("dropdown").classList.add("is-hidden");
+
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
@@ -67,15 +71,13 @@ const CatchyPass = () => {
     setPassword("\n");
   };
 
-  // console.log(errors);
-
   const keywordsInput = (nInput) => {
     const indexArray = Array.from(Array(nInput).keys());
     return indexArray.map(function (index) {
       let keywordId = `keyword ${index + 1}`;
       return (
         <div className="field" key={keywordId}>
-          <p class="control is-expanded">
+          <p className="control is-expanded">
             <input
               type="text"
               placeholder={keywordId}
@@ -90,7 +92,7 @@ const CatchyPass = () => {
           </p>
           <p className="has-text-danger">
             {errors[keywordId]?.type === "minLength" &&
-              "Your keyword required to be more than 2 letters"}
+              "Your keyword required to be more than 3 letters"}
           </p>
           <p className="has-text-danger">
             {errors[keywordId]?.type === "maxLength" &&
@@ -103,6 +105,78 @@ const CatchyPass = () => {
         </div>
       );
     });
+  };
+
+  const dropdown = () => {
+    const dropdownBtnOnClick = () => {
+      document.querySelector(".dropdown").classList.toggle("is-active");
+    };
+    const dropdownItemOnClick = (event) => {
+      const sourceId = event.target.id;
+      let pswIndex = 1;
+      switch (sourceId) {
+        case "password-character":
+          pswIndex = 0;
+          break;
+        case "password-number":
+          pswIndex = 1;
+          break;
+        case "password-uppercase":
+          pswIndex = 2;
+          break;
+      }
+
+      document.getElementById(
+        "dropdown-info"
+      ).innerHTML = document.getElementById(sourceId).innerHTML;
+      setPassword(passwordResult[pswIndex]);
+      dropdownBtnOnClick();
+    };
+
+    return (
+      <div className="dropdown">
+        <div className="dropdown-trigger" onClick={dropdownBtnOnClick}>
+          <button
+            className="button"
+            aria-haspopup="true"
+            aria-controls="dropdown-menu"
+          >
+            <span id="dropdown-info">Select password types</span>
+            <span className="icon is-small">
+              <i className="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div className="dropdown-menu" id="dropdown-menu" role="menu">
+          <div className="dropdown-content">
+            <a
+              id="password-uppercase"
+              href="#"
+              className="dropdown-item"
+              onClick={dropdownItemOnClick}
+            >
+              Including only letters
+            </a>
+            <a
+              id="password-number"
+              href="#"
+              className="dropdown-item is-active"
+              onClick={dropdownItemOnClick}
+            >
+              Including numbers
+            </a>
+            <a
+              id="password-character"
+              href="#"
+              className="dropdown-item"
+              onClick={dropdownItemOnClick}
+            >
+              Including special characters
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -130,8 +204,9 @@ const CatchyPass = () => {
             <article className="message is-link">
               <div className="message-header">Limerick Result:</div>
               <div
+                id="limerick-result"
                 className="message-body"
-                style={{ "white-space": "pre-line" }}
+                style={{ whiteSpace: "pre-line" }}
               >
                 {sentence}
               </div>
@@ -142,10 +217,14 @@ const CatchyPass = () => {
             <article className="message is-link">
               <div className="message-header">Password Result:</div>
               <div
+                id="psw-result"
                 className="message-body"
-                style={{ "white-space": "pre-line" }}
+                style={{ whiteSpace: "pre-line" }}
               >
-                {password}
+                <div id="dropdown" className="is-hidden">
+                  {dropdown}
+                </div>
+                <div>{password}</div>
               </div>
             </article>
           </div>
