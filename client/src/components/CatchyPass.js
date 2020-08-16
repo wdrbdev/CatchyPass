@@ -43,7 +43,7 @@ const CatchyPass = () => {
           setIsLoading("");
 
           setPassword(passwordResult[1]);
-          setIntervalTime(null); // Stop checking database
+          setIntervalTime(null); // Stop checking database regularly
         }
       }
       setResult();
@@ -65,7 +65,10 @@ const CatchyPass = () => {
       { headers: { "Content-Type": "application/json" } }
     );
     document.getElementById("dropdown").classList.add("is-hidden");
+    document.getElementById(".dropdown").classList.remove("is-active");
     document.getElementById("copy-btn").classList.add("is-hidden");
+    document.getElementById("dropdown-info").innerHTML =
+      "Select password types";
 
     setIntervalTime(INTERVAL_TIME);
     setSentenceId(res.data._id);
@@ -136,9 +139,10 @@ const CatchyPass = () => {
       ).innerHTML = document.getElementById(sourceId).innerHTML;
       ["password-uppercase", "password-number", "password-character"].map(
         (pswId) => {
-          document.getElementById(pswId).classList.toggle("is-active");
+          document.getElementById(pswId).classList.remove("is-active");
         }
       );
+      document.getElementById(sourceId).classList.add("is-active");
       setPassword(passwordResult[pswIndex]);
       dropdownBtnOnClick();
     };
