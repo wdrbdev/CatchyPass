@@ -65,7 +65,7 @@ const CatchyPass = () => {
       { headers: { "Content-Type": "application/json" } }
     );
     document.getElementById("dropdown").classList.add("is-hidden");
-    document.getElementById(".dropdown").classList.remove("is-active");
+    document.getElementById("dropdown").classList.remove("is-active");
     document.getElementById("copy-btn").classList.add("is-hidden");
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
