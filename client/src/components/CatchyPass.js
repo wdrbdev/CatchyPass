@@ -13,7 +13,9 @@ const CatchyPass = () => {
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("\n");
   const [password, setPassword] = useState("\n");
+  const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
+  const [intervalTime, setIntervalTime] = useState(10000);
 
   /*
    * Check database regularly
@@ -29,16 +31,18 @@ const CatchyPass = () => {
           { headers: { "Content-Type": "application/json" } }
         );
         setSentence(res.data.sentenceResult || "\n");
-        setPassword(res.data.passwordResult || "\n");
-
-        if (password !== "\n") {
+        setPasswordResult(res.data.passwordResult || []);
+        if (passwordResult.length >= 0) {
           setStatus("Password result is generated.");
           setIsLoading("");
+
+          setPassword(passwordResult[1]);
+          setIntervalTime(null); // Stop checking database
         }
       }
       setResult();
     }
-  }, 10000);
+  }, intervalTime);
 
   /*
    * React Hook Form
@@ -57,6 +61,9 @@ const CatchyPass = () => {
     setSentenceId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
+
+    setSentence("\n");
+    setPassword("\n");
   };
 
   // console.log(errors);
