@@ -96,10 +96,10 @@ const CatchyPass = () => {
       randomKeyword =
         keywordList[Math.floor(Math.random() * keywordList.length)];
       document.querySelector(
-        `input[name="keyword ${i}"]`
+        `input[name="keyword ${i + 1}"]`
       ).value = randomKeyword;
     }
-    document.getElementById(`submit-btn`).click();
+    document.getElementById("submit-btn").click();
   };
 
   const keywordsInput = (nInput) => {
