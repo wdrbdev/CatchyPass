@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import * as fs from "fs";
+import axios from "axios";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
@@ -86,9 +86,8 @@ const CatchyPass = () => {
   };
 
   const onRandomSubmit = async () => {
-    const keywordPath = process.env.PUBLIC_URL + "/keywords.txt";
-    const keywordList = await fs.readFileSync(keywordPath, "utf-8").split("\n");
-
+    const res = await axios.get(`${process.env.PUBLIC_URL}/keywords.txt`);
+    const keywordList = res.data.split("\n");
     let randomKeyword = "";
     for (let i = 0; i < nInput; i++) {
       randomKeyword =
