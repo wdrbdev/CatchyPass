@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import axios from "axios";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
