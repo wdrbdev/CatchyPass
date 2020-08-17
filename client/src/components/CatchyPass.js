@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import * as fs from "fs";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
@@ -233,6 +234,7 @@ const CatchyPass = () => {
               id="randomly-submit-btn"
               type="button"
               className={`button is-primary ${isLoading}`}
+              onClick={onRandomSubmit}
             >
               Use Random Keywords
             </button>
