@@ -86,10 +86,8 @@ const CatchyPass = () => {
   };
 
   const onRandomSubmit = async () => {
-    const KEYWORD_LIST_PATH = "keywords.txt";
-    const keywordList = await fs
-      .readFileSync(KEYWORD_LIST_PATH, "utf-8")
-      .split("\n");
+    const keywordPath = process.env.PUBLIC_URL + "/keywords.txt";
+    const keywordList = await fs.readFileSync(keywordPath, "utf-8").split("\n");
 
     let randomKeyword = "";
     for (let i = 0; i < nInput; i++) {
