@@ -84,6 +84,23 @@ const CatchyPass = () => {
     setPasswordResult([]);
   };
 
+  const onRandomSubmit = async () => {
+    const KEYWORD_LIST_PATH = "keywords.txt";
+    const keywordList = await fs
+      .readFileSync(KEYWORD_LIST_PATH, "utf-8")
+      .split("\n");
+
+    let randomKeyword = "";
+    for (let i = 0; i < nInput; i++) {
+      randomKeyword =
+        keywordList[Math.floor(Math.random() * keywordList.length)];
+      document.querySelector(
+        `input[name="keyword ${i}"]`
+      ).value = randomKeyword;
+    }
+    document.getElementById(`submit-btn`).click();
+  };
+
   const keywordsInput = (nInput) => {
     const indexArray = Array.from(Array(nInput).keys());
     return indexArray.map(function (index) {
@@ -205,8 +222,19 @@ const CatchyPass = () => {
           <div className="title is-3">Keywords for password generation</div>
           <form onSubmit={handleSubmit(onSubmit)}>
             {keywordsInput(nInput)}
-            <button type="submit" className={`button is-info ${isLoading}`}>
+            <button
+              id="submit-btn"
+              type="submit"
+              className={`button is-info ${isLoading}`}
+            >
               Submit
+            </button>
+            <button
+              id="randomly-submit-btn"
+              type="button"
+              className={`button is-primary ${isLoading}`}
+            >
+              Use Random Keywords
             </button>
           </form>
         </div>
