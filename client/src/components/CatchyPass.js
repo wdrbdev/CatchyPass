@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import useInterval from "use-interval";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import keywordList from "./keywords";
 
 const CatchyPass = () => {
   const { register, errors, handleSubmit } = useForm();
@@ -19,9 +20,6 @@ const CatchyPass = () => {
   const [isLoading, setIsLoading] = useState("");
   const [intervalTime, setIntervalTime] = useState(INTERVAL_TIME);
 
-  const res = await axios.get(`${process.env.PUBLIC_URL}/keywords.txt`);
-  const keywordList = res.data.split("\n");
-  
   /*
    * Check database regularly
    */
