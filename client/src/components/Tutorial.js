@@ -3,7 +3,35 @@ import React from "react";
 const Tutorial = () => {
   return (
     <div className="container">
-      <div className="title">Tutorial</div>
+      <div className="mt-2">
+        <div className="title is-3">CatchyPass - Tutorial</div>
+        <div className="is-size-5">
+          <p>
+            Users could type keyword input and press the submit button to
+            generate limerick and password relative to keyword input. Also,
+            users could choose not to submit password and use the keyword
+            randomly provided by the system to generate random passwords.
+          </p>
+          <p>
+            There are 3 types of password formats:
+            <ol style={{ "list-style-position": "inside" }}>
+              <li>
+                Password only contains upper-case and lower-case english
+                characters.
+              </li>
+              <li>
+                Password contains numbers and english characters. (default)
+              </li>
+              <li>
+                Password contains special characters, numbers and english
+                characters.
+              </li>
+            </ol>
+            User could choose their preferred formats by clicking the dropdown
+            menu in the password result section.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
