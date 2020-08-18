@@ -221,7 +221,7 @@ const CatchyPass = () => {
             <button
               id="submit-btn"
               type="submit"
-              className={`button is-info ${isLoading}`}
+              className={`button is-info ${isLoading} mr-2`}
             >
               Submit
             </button>
