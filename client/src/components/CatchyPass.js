@@ -19,6 +19,9 @@ const CatchyPass = () => {
   const [isLoading, setIsLoading] = useState("");
   const [intervalTime, setIntervalTime] = useState(INTERVAL_TIME);
 
+  const res = await axios.get(`${process.env.PUBLIC_URL}/keywords.txt`);
+  const keywordList = res.data.split("\n");
+  
   /*
    * Check database regularly
    */
@@ -85,8 +88,6 @@ const CatchyPass = () => {
   };
 
   const onRandomSubmit = async () => {
-    const res = await axios.get(`${process.env.PUBLIC_URL}/keywords.txt`);
-    const keywordList = res.data.split("\n");
     let randomKeyword = "";
     for (let i = 0; i < nInput; i++) {
       randomKeyword =
