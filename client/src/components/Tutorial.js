@@ -9,7 +9,7 @@ const Tutorial = () => {
           <p>
             Users could type keyword input and press the submit button to
             generate limerick and password relative to keyword input. Also,
-            users could choose not to submit password and use the keyword
+            users could choose not to submit keywords and use the keywords
             randomly provided by the system to generate random passwords.
           </p>
           <p>
@@ -17,14 +17,12 @@ const Tutorial = () => {
             <ol style={{ "list-style-position": "inside" }}>
               <li>
                 Password only contains upper-case and lower-case english
-                characters.
+                letters.
               </li>
-              <li>
-                Password contains numbers and english characters. (default)
-              </li>
+              <li>Password contains numbers and english letters. (default)</li>
               <li>
                 Password contains special characters, numbers and english
-                characters.
+                letters.
               </li>
             </ol>
             User could choose their preferred formats by clicking the dropdown
