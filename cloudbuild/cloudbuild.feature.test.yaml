@@ -206,11 +206,52 @@ steps:
       - "./k8s/staging/deployment/client-deployment.yaml"
     waitFor: ["replace tag for client"]
 
+  # Integration testing
+  - id: "get endpoint"
+    name: "gcr.io/cloud-builders/kubectl"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        # determine which node port the service was exposed on
+        get_nodeport() {
+          kubectl get service cookieshop-web -o=jsonpath='{.spec.ports[0].nodePort}' 
+        }
+        until [[ -n "$(get_nodeport)" ]]; do
+            echo "querying for nodeport"
+            sleep 3
+        done
+        echo "$(get_nodeport)" > _nodeport # save port for use in next step
+        # grab the public IP of a random node
+        # (why do this instead of a load balancer? b/c it's faster to instantiate)
+        # (and doesn't require additional billable resources)
+        # (we can reasonably expect the node to be durable enough to last until the test completes)
+        get_nodeip() {
+          kubectl get nodes --output jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}'
+        }
+        until [[ -n "$(get_nodeip)" ]]; do
+            echo "querying for nodeip"
+            sleep 3
+        done
+        echo $(get_nodeip) > _nodeip # save ip for use in next step
+        echo $(cat _nodeip)
+    waitFor: ["deploy client"]
+
+  - id: "delete cluster"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
+    waitFor: ["get endpoint"]
+
 options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
+    - RESERVED_IP=35.220.154.72
 
 timeout: 60m0s
