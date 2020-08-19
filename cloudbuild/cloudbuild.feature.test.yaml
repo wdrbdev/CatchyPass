@@ -51,7 +51,7 @@ steps:
       - "add"
       - "stable"
       - "https://kubernetes-charts.storage.googleapis.com"
-    waitFor: ["helm add repo"]
+    waitFor: ["create cluster"]
 
   - id: "deploy ingress-nginx"
     name: "gcr.io/cloud-builders-community/helm"
@@ -61,7 +61,7 @@ steps:
       - "stable/nginx-ingress"
       - "--set"
       - "controller.service.loadBalancerIP=104.199.213.237,rbac.create=true"
-    waitFor: ["create cluster"]
+    waitFor: ["helm add repo"]
 
   # PVC
   - id: "deploy pvc"
