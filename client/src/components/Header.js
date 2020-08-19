@@ -19,13 +19,13 @@ const Header = () => {
         // Add a click event on each of them
         $navbarBurgers.forEach((el) => {
           el.addEventListener("click", () => {
-            document
-              .querySelector(".navbar-burger")
-              .classList.toggle("is-active");
+            // Get the target from the "data-target" attribute
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
 
-            document
-              .querySelector(".navbar-menu")
-              .classList.toggle("is-active");
+            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+            el.classList.toggle("is-active");
+            $target.classList.toggle("is-active");
           });
         });
       }
@@ -43,13 +43,13 @@ const Header = () => {
           <img src={logo} alt="CatchyPass" width="auto" height="100%" />
           <strong className="is-size-4 px-1">CatchyPass</strong>
         </a>
-        <div className="navbar-burger burger">
+        <div className="navbar-burger burger" data-target="navMenu">
           <span></span>
           <span></span>
           <span></span>
         </div>
       </div>
-      <div className="navbar-menu">
+      <div id="navMenu" className="navbar-menu">
         <div className="navbar-start">
           <div className="navbar-item has-dropdown is-hoverable">
             <a className="navbar-link" href="#">
