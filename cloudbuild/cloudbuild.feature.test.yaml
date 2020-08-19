@@ -259,7 +259,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
-        sed -i "s/ENV_VARS_RESERVED_IP/$RESERVED_IP/g" ./k8s/staging/test/e2e.yaml
+        sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
         cat ./k8s/staging/test/e2e.yaml
     waitFor: ["push e2e docker"] # start immediately
   - id: "deploy e2e"
@@ -293,6 +293,6 @@ options:
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
-    - RESERVED_IP=35.220.154.72
+    - _RESERVED_IP=35.220.154.72
 
 timeout: 20m0s
