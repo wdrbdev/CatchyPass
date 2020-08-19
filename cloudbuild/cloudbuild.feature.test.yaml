@@ -134,7 +134,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/server-deployment.yaml
-        cat ./k8s/staging/deployment/server-deployment.yaml
+        # cat ./k8s/staging/deployment/server-deployment.yaml
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -165,7 +165,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
-        cat ./k8s/staging/deployment/worker-deployment.yaml
+        # cat ./k8s/staging/deployment/worker-deployment.yaml
     waitFor: ["push worker docker"] # start immediately
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
@@ -196,7 +196,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/client-deployment.yaml
-        cat ./k8s/staging/deployment/client-deployment.yaml
+        # cat ./k8s/staging/deployment/client-deployment.yaml
     waitFor: ["build client docker"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
@@ -222,6 +222,7 @@ steps:
             sleep 3
         done
         echo "$(get_nodeport)" > _nodeport # save port for use in next step
+        echo $(cat _nodeport)
         # grab the public IP of a random node
         # (why do this instead of a load balancer? b/c it's faster to instantiate)
         # (and doesn't require additional billable resources)
@@ -237,6 +238,46 @@ steps:
         echo $(cat _nodeip)
     waitFor: ["deploy client"]
 
+  - id: "build e2e docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+      - "./e2e"
+    waitFor: ["deploy server"]
+  - id: "push e2e docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+    waitFor: ["build e2e docker"]
+  - id: "replace tag for e2e"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
+        sed -i "s/ENV_VARS_RESERVED_IP/$RESERVED_IP/g" ./k8s/staging/test/e2e.yaml
+        cat ./k8s/staging/test/e2e.yaml
+    waitFor: ["push e2e docker"] # start immediately
+  - id: "deploy e2e"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/deployment/e2e-deployment.yaml"
+    waitFor: ["replace tag for worker"]
+  - id: "wait e2e to finish"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "wait"
+      - "--for=condition=complete"
+      - "job/e2e"
+      - "--timeout=10m"
+    waitFor: ["deploy e2e"]
+
   - id: "delete cluster"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -244,7 +285,7 @@ steps:
       - "-c"
       - |
         gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
-    waitFor: ["get endpoint"]
+    waitFor: ["wait e2e to finish"]
 
 options:
   env:
