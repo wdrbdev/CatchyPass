@@ -245,7 +245,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
       - "./e2e"
-    waitFor: ["deploy server"]
+    waitFor: ["deploy client"]
   - id: "push e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -261,14 +261,15 @@ steps:
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
         sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
         cat ./k8s/staging/test/e2e.yaml
-    waitFor: ["push e2e docker"] # start immediately
+    # waitFor: ["push e2e docker"] # start immediately
+    waitFor: ["-"] # start immediately
   - id: "deploy e2e"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
       - "./k8s/staging/test/e2e.yaml"
-    waitFor: ["replace tag for worker"]
+    waitFor: ["replace tag for e2e"]
   - id: "wait e2e to finish"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -293,6 +294,5 @@ options:
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
-    - _RESERVED_IP=35.220.154.72
 
 timeout: 20m0s
