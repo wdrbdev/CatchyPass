@@ -45,7 +45,7 @@ steps:
 
   # ingress-nginx
   - id: "helm add repo"
-    name: "gcr.io/cloud-builders-community/helm"
+    name: "gcr.io/$PROJECT_ID/helm"
     args:
       - "repo"
       - "add"
@@ -54,7 +54,7 @@ steps:
     waitFor: ["create cluster"]
 
   - id: "deploy ingress-nginx"
-    name: "gcr.io/cloud-builders-community/helm"
+    name: "gcr.io/$PROJECT_ID/helm"
     args:
       - "install"
       - "my-nginx"
