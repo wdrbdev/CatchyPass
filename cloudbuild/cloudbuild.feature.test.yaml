@@ -35,16 +35,6 @@ steps:
     args: ["-c", 'find k8s -type f | xargs sed -i "s/PROJECT_ID/$PROJECT_ID/g"']
     waitFor: ["create cluster"]
 
-  - id: "setup cluster info"
-    name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        CLOUDSDK_CONTAINER_CLUSTER=$(cat _cluster-name)
-    waitFor:
-      - "patch k8s config"
-
   # ingress-nginx
   - id: "helm add repo"
     name: "gcr.io/$PROJECT_ID/helm"
@@ -53,7 +43,7 @@ steps:
       - "add"
       - "stable"
       - "https://kubernetes-charts.storage.googleapis.com"
-    waitFor: ["setup cluster info"]
+    waitFor: ["patch k8s config"]
 
   - id: "deploy ingress-nginx"
     name: "gcr.io/$PROJECT_ID/helm"
@@ -110,7 +100,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/staging/deployment/redis-deployment.yaml"
-    waitFor: ["setup cluster info"]
+    waitFor: ["patch k8s config"]
 
   # service
   - id: "deploy services"
@@ -130,7 +120,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
       - "./server"
-    waitFor: ["setup cluster info"]
+    waitFor: ["patch k8s config"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -195,6 +185,7 @@ options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
     - CLOUDSDK_COMPUTE_ZONE=asia-east1-a
+    - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
 
 timeout: 60m0s
