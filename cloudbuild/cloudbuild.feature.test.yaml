@@ -1,0 +1,120 @@
+# Copyright 2019 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+  - id: "clone from GitHub repo"
+    name: gcr.io/cloud-builders/git
+    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+
+  - id: "create cluster"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        # capture the cluster name to be created
+        # (it will be used again for the deletion)
+        echo "test-$SHORT_SHA" > _cluster-name
+        gcloud container clusters create $(cat _cluster-name)
+    waitFor: ["-"] # start immediately
+
+  - id: "patch k8s config"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args: ["-c", 'find k8s -type f | xargs sed -i "s/PROJECT_ID/$PROJECT_ID/g"']
+    waitFor: ["create cluster"]
+
+  - id: "setup cluster info"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        CLOUDSDK_CONTAINER_CLUSTER=$(cat _cluster-name)
+
+  # ingress-nginx
+  - id: "helm add repo"
+    name: "gcr.io/$PROJECT_ID/helm"
+    args:
+      - "repo"
+      - "add"
+      - "stable"
+      - "https://kubernetes-charts.storage.googleapis.com"
+    waitFor: ["create cluster"]
+
+  - id: "deploy ingress-nginx"
+    name: "gcr.io/$PROJECT_ID/helm"
+    args:
+      - "install"
+      - "my-nginx"
+      - "stable/nginx-ingress"
+      - "--set"
+      - "controller.service.loadBalancerIP=104.199.213.237,rbac.create=true"
+    waitFor: ["helm add repo"]
+
+  # PVC
+  - id: "deploy pvc"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/util/mongodb-pvc.yaml"
+    waitFor: ["deploy ingress-nginx"]
+
+  # ingress setup
+  - id: "deploy ingress local service"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/ingress-service-local.yaml"
+    waitFor: ["deploy ingress-nginx"]
+
+  # mongo docker
+  - id: "set mongo secret"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "create"
+      - "secret"
+      - "generic"
+      - "mongopassword"
+      - "--from-literal"
+      - "MONGO_PASSWORD=${_MONGO_SECRET}"
+    waitFor: ["deploy pvc"]
+
+  - id: "deploy mongo"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/deployment/mongodb-deployment.yaml"
+    waitFor: ["set mongo secret"]
+
+  # redis
+  - id: "deploy redis"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/deployment/redis-deployment.yaml"
+    waitFor: ["create cluster"]
+
+options:
+  env:
+    # location/name of GKE cluster (used by all kubectl commands)
+    - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
+    - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
+    - CI=true
+
+timeout: 60m0s
