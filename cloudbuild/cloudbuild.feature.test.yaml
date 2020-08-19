@@ -65,7 +65,7 @@ steps:
 options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
-    - CLOUDSDK_COMPUTE_ZONE=asia-east1-a
+    - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CI=true
 
 timeout: 60m0s
