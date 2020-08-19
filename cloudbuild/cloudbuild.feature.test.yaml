@@ -127,7 +127,7 @@ steps:
       - "push"
       - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
     waitFor: ["build server docker"]
-  - id: "replace tag for worker"
+  - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
@@ -141,7 +141,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/staging/deployment/server-deployment.yaml"
-    waitFor: ["push server docker"]
+    waitFor: ["replace tag for server"]
 
   # worker
   - id: "build worker docker"
@@ -204,7 +204,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/staging/deployment/client-deployment.yaml"
-    waitFor: ["push client docker"]
+    waitFor: ["replace tag for client"]
 
 options:
   env:
