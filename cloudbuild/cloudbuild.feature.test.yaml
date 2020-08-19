@@ -215,7 +215,7 @@ steps:
       - |
         # determine which node port the service was exposed on
         get_nodeport() {
-          kubectl get service cookieshop-web -o=jsonpath='{.spec.ports[0].nodePort}' 
+          kubectl get service  my-nginx-nginx-ingress-controller -o=jsonpath='{.spec.ports[0].nodePort}' 
         }
         until [[ -n "$(get_nodeport)" ]]; do
             echo "querying for nodeport"
@@ -254,4 +254,4 @@ options:
     - CI=true
     - RESERVED_IP=35.220.154.72
 
-timeout: 60m0s
+timeout: 20m0s
