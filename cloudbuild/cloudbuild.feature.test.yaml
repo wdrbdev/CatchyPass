@@ -52,13 +52,22 @@ steps:
       - "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml"
     waitFor: ["create cluster"]
 
-  # utils
-  - id: "deploy utils"
+  # PVC
+  - id: "deploy pvc"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/util"
+      - "./k8s/util/mongodb-pvc.yaml"
+    waitFor: ["deploy ingress-nginx"]
+
+  # ingress setup
+  - id: "deploy ingress service"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/ingress-service-local.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # mongo docker
