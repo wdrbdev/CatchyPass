@@ -62,7 +62,6 @@ steps:
       - "stable/nginx-ingress"
       - "--set"
       - "controller.service.loadBalancerIP=104.199.213.237,rbac.create=true"
-    tags: ["cloud-builders-community"]
     waitFor: ["create cluster"]
 
   # PVC
