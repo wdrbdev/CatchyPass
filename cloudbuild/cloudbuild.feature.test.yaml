@@ -33,7 +33,15 @@ steps:
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args: ["-c", 'find k8s -type f | xargs sed -i "s/PROJECT_ID/$PROJECT_ID/g"']
-    waitFor: ["-"]
+    waitFor: ["create cluster"]
+
+  - id: "setup cluster info"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        CLOUDSDK_CONTAINER_CLUSTER=$(cat _cluster-name)
 
   # ingress-nginx
   - id: "deploy ingress-nginx"
@@ -42,9 +50,10 @@ steps:
       - "apply"
       - "-f"
       - "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml"
+    waitFor: ["create cluster"]
 
   # mongo docker
-  - id: "set mong secret"
+  - id: "set mongo secret"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "create"
@@ -53,6 +62,7 @@ steps:
       - "mongopassword"
       - "--from-literal"
       - "MONGO_PASSWORD=${_MONGO_SECRET}"
+    waitFor: ["create cluster"]
 
   - id: "deploy mongo"
     name: "gcr.io/cloud-builders/kubectl"
@@ -60,6 +70,8 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/deployment/mongodb-deployment.yaml"
+    waitFor: ["set mongo secret"]
+
   # redis
   - id: "deploy redis"
     name: "gcr.io/cloud-builders/kubectl"
@@ -67,6 +79,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/deployment/redis-deployment.yaml"
+    waitFor: ["create cluster"]
 
 options:
   env:
