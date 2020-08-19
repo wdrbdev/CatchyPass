@@ -267,7 +267,7 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/e2e-deployment.yaml"
+      - "./k8s/staging/test/e2e.yaml"
     waitFor: ["replace tag for worker"]
   - id: "wait e2e to finish"
     name: "gcr.io/cloud-builders/kubectl"
