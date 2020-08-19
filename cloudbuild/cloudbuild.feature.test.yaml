@@ -51,7 +51,6 @@ steps:
       - "add"
       - "stable"
       - "https://kubernetes-charts.storage.googleapis.com"
-    tags: ["cloud-builders-community"]
     waitFor: ["helm add repo"]
 
   - id: "deploy ingress-nginx"
