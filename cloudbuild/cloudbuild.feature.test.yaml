@@ -51,7 +51,7 @@ steps:
       - "add"
       - "stable"
       - "https://kubernetes-charts.storage.googleapis.com"
-    waitFor: ["create cluster"]
+    waitFor: ["patch k8s config"]
 
   - id: "deploy ingress-nginx"
     name: "gcr.io/$PROJECT_ID/helm"
@@ -60,7 +60,7 @@ steps:
       - "my-nginx"
       - "stable/nginx-ingress"
       - "--set"
-      - "controller.service.loadBalancerIP=104.199.213.237,rbac.create=true"
+      - "rbac.create=true"
     waitFor: ["helm add repo"]
 
   # PVC
@@ -69,7 +69,7 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/util/mongodb-pvc.yaml"
+      - "./k8s/staging/mongodb-pvc.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # ingress setup
@@ -78,7 +78,7 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/ingress-service-local.yaml"
+      - "./k8s/staging/ingress-service-local.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # mongo docker
@@ -107,14 +107,142 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/deployment/redis-deployment.yaml"
-    waitFor: ["create cluster"]
+      - "./k8s/staging/deployment/redis-deployment.yaml"
+    waitFor: ["patch k8s config"]
+
+  # service
+  - id: "deploy services"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/service/"
+    waitFor: ["deploy ingress local service"]
+
+  # server docker
+  # Build images
+  - id: "build server docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+      - "./server"
+    waitFor: ["patch k8s config"]
+  - id: "push server docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+    waitFor: ["build server docker"]
+  - id: "deploy server"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/deployment/server-deployment.yaml"
+    waitFor: ["push server docker"]
+
+  # worker
+  - id: "build worker docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+      - "./worker"
+    waitFor: ["deploy server"]
+  - id: "push worker docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+    waitFor: ["build worker docker"]
+  - id: "deploy worker"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/deployment/worker-deployment.yaml"
+    waitFor: ["push worker docker"]
+
+  # client
+  - id: "build client docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+      - "./client"
+    waitFor: ["deploy worker"]
+  - id: "push client docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+    waitFor: ["build client docker"]
+  - id: "deploy client"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/deployment/client-deployment.yaml"
+    waitFor: ["push client docker"]
+
+  - id: "get endpoint"
+    name: "gcr.io/cloud-builders/kubectl"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        # determine which node port the service was exposed on
+        get_nodeport() {
+          kubectl get service cookieshop-web -o=jsonpath='{.spec.ports[0].nodePort}' 
+        }
+        until [[ -n "$(get_nodeport)" ]]; do
+            echo "querying for nodeport"
+            sleep 3
+        done
+        echo "$(get_nodeport)" > _nodeport # save port for use in next step
+        # grab the public IP of a random node
+        # (why do this instead of a load balancer? b/c it's faster to instantiate)
+        # (and doesn't require additional billable resources)
+        # (we can reasonably expect the node to be durable enough to last until the test completes)
+        get_nodeip() {
+          kubectl get nodes --output jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}'
+        }
+        until [[ -n "$(get_nodeip)" ]]; do
+            echo "querying for nodeip"
+            sleep 3
+        done
+        echo $(get_nodeip) > _nodeip # save ip for use in next step
+        echo $(cat _nodeip)
+    waitFor: ["deploy client"]
+
+  - id: "integration tests"
+    name: "gcr.io/cloud-builders/curl"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - |
+        ### -r = retries; -i = interval; -k = keyword to search for ###
+        ./test/test-connection.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport)
+        ./test/test-content.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport) -k 'Chocolate Chip'
+    waitFor: ["get endpoint"]
+
+  - id: "delete cluster"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
+    waitFor: ["integration tests"]
 
 options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
-    - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
-    - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
+    - CLOUDSDK_COMPUTE_ZONE=asia-east1-a
     - CI=true
 
 timeout: 60m0s
