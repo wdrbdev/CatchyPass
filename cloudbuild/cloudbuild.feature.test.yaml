@@ -45,7 +45,7 @@ steps:
 
   # ingress-nginx
   - id: "helm add repo"
-    name: "gcr.io/$PROJECT_ID/helm"
+    name: "gcr.io/cloud-builders-community/helm"
     args:
       - "repo"
       - "add"
