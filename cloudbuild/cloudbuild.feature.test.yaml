@@ -25,7 +25,7 @@ steps:
       - |
         # capture the cluster name to be created
         # (it will be used again for the deletion)
-        echo "test-$(date +%s)" > _cluster-name
+        echo "test-$SHORT_SHA" > _cluster-name
         gcloud container clusters create $(cat _cluster-name)
     waitFor: ["-"] # start immediately
 
@@ -85,6 +85,7 @@ options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
+    - CLOUDSDK_CONTAINER_CLUSTER="test-$SHORT_SHA"
     - CI=true
 
 timeout: 60m0s
