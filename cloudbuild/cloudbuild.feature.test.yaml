@@ -90,7 +90,7 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/deployment/mongodb-deployment.yaml"
+      - "./k8s/staging/deployment/mongodb-deployment.yaml"
     waitFor: ["set mongo secret"]
 
   # redis
