@@ -62,7 +62,7 @@ steps:
     waitFor: ["deploy ingress-nginx"]
 
   # ingress setup
-  - id: "deploy ingress service"
+  - id: "deploy ingress local service"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
@@ -80,7 +80,7 @@ steps:
       - "mongopassword"
       - "--from-literal"
       - "MONGO_PASSWORD=${_MONGO_SECRET}"
-    waitFor: ["deploy utils"]
+    waitFor: ["deploy pvc"]
 
   - id: "deploy mongo"
     name: "gcr.io/cloud-builders/kubectl"
@@ -88,7 +88,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/deployment/mongodb-deployment.yaml"
-    waitFor: ["deploy utils"]
+    waitFor: ["set mongo secret"]
 
   # redis
   - id: "deploy redis"
