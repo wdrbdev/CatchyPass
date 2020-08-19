@@ -44,12 +44,25 @@ steps:
         CLOUDSDK_CONTAINER_CLUSTER=$(cat _cluster-name)
 
   # ingress-nginx
-  - id: "deploy ingress-nginx"
-    name: "gcr.io/cloud-builders/kubectl"
+  - id: "helm add repo"
+    name: "gcr.io/$PROJECT_ID/helm"
     args:
-      - "apply"
-      - "-f"
-      - "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml"
+      - "repo"
+      - "add"
+      - "stable"
+      - "https://kubernetes-charts.storage.googleapis.com"
+    tags: ["cloud-builders-community"]
+    waitFor: ["helm add repo"]
+
+  - id: "deploy ingress-nginx"
+    name: "gcr.io/$PROJECT_ID/helm"
+    args:
+      - "install"
+      - "my-nginx"
+      - "stable/nginx-ingress"
+      - "--set"
+      - "controller.service.loadBalancerIP=104.199.213.237,rbac.create=true"
+    tags: ["cloud-builders-community"]
     waitFor: ["create cluster"]
 
   # PVC
