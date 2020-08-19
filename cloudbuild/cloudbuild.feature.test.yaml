@@ -52,7 +52,7 @@ steps:
       - "my-nginx"
       - "stable/nginx-ingress"
       - "--set"
-      - "rbac.create=true"
+      - "controller.service.loadBalancerIP=35.220.154.72,rbac.create=true"
     waitFor: ["helm add repo"]
 
   # PVC
