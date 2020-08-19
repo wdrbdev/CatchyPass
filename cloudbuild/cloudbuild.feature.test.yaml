@@ -127,6 +127,14 @@ steps:
       - "push"
       - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
     waitFor: ["build server docker"]
+  - id: "replace tag for worker"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/server-deployment.yaml
+        cat ./k8s/staging/deployment/server-deployment.yaml
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -150,13 +158,22 @@ steps:
       - "push"
       - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
     waitFor: ["build worker docker"]
+  - id: "replace tag for worker"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
+        cat ./k8s/staging/deployment/worker-deployment.yaml
+    waitFor: ["push worker docker"] # start immediately
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
       - "./k8s/staging/deployment/worker-deployment.yaml"
-    waitFor: ["push worker docker"]
+    waitFor: ["replace tag for worker"]
 
   # client
   - id: "build client docker"
@@ -172,6 +189,14 @@ steps:
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+  - id: "replace tag for client"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/client-deployment.yaml
+        cat ./k8s/staging/deployment/client-deployment.yaml
     waitFor: ["build client docker"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
