@@ -52,6 +52,15 @@ steps:
       - "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.34.1/deploy/static/provider/cloud/deploy.yaml"
     waitFor: ["create cluster"]
 
+  # utils
+  - id: "deploy utils"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/util"
+    waitFor: ["deploy ingress-nginx"]
+
   # mongo docker
   - id: "set mongo secret"
     name: "gcr.io/cloud-builders/kubectl"
@@ -62,7 +71,7 @@ steps:
       - "mongopassword"
       - "--from-literal"
       - "MONGO_PASSWORD=${_MONGO_SECRET}"
-    waitFor: ["create cluster"]
+    waitFor: ["deploy utils"]
 
   - id: "deploy mongo"
     name: "gcr.io/cloud-builders/kubectl"
@@ -70,7 +79,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/deployment/mongodb-deployment.yaml"
-    waitFor: ["set mongo secret"]
+    waitFor: ["deploy utils"]
 
   # redis
   - id: "deploy redis"
