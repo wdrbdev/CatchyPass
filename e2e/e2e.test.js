@@ -33,6 +33,7 @@ describe("When users navigate to the website,", () => {
   test("Users can see tutorial page", async () => {
     await page.hover(".navbar-link");
     await page.click(`.navbar-item[href="/tutorial"]`);
+    await page.waitFor("#tutorial-title");
     const tutorialTitle = await page.$eval(
       "#tutorial-title",
       (elem) => elem.innerHTML
@@ -43,6 +44,7 @@ describe("When users navigate to the website,", () => {
   test("Users can see about page", async () => {
     await page.hover(".navbar-link");
     await page.click(`.navbar-item[href="/about"]`);
+    await page.waitFor("#about-title");
     const tutorialTitle = await page.$eval(
       "#about-title",
       (elem) => elem.innerHTML
