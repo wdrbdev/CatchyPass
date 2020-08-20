@@ -228,7 +228,7 @@ steps:
         # (and doesn't require additional billable resources)
         # (we can reasonably expect the node to be durable enough to last until the test completes)
         get_nodeip() {
-          kubectl get nodes --output jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}'
+          kubectl get service my-nginx-nginx-ingress-controller  --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
         }
         until [[ -n "$(get_nodeip)" ]]; do
             echo "querying for nodeip"
