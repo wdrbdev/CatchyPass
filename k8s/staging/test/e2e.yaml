@@ -7,11 +7,11 @@ spec:
     spec:
       containers:
         - name: e2e
-          image: asia.gcr.io/catchypass/e2e-prod
+          image: asia.gcr.io/catchypass-dev/e2e-stg:ENV_VARS_SHORT_SHA
           imagePullPolicy: IfNotPresent
           command: ["npm", "run", "test"]
           env:
-            - name: MINIKUBE_IP
-              value: ENV_VARS_MINIKUBE_IP
+            - name: RESERVED_IP
+              value: ENV_VARS_RESERVED_IP
       restartPolicy: Never
   backoffLimit: 10
