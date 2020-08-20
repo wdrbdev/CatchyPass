@@ -1,6 +1,6 @@
 const axios = require("axios");
 const config = require("./config");
-const rootUrl = "http://staging.albertapp.codes";
+const rootUrl = "http://albertapp.codes"; //"http://test.albertapp.codes";
 
 const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -12,25 +12,43 @@ beforeEach(async () => {
 });
 
 test("Test IP address in env variable.", async () => {
-  const res = await axios.get(`${rootUrl}/api`);
+  const res = await axios.get(`${rootUrl}`);
   expect(res.status).toEqual(200);
 });
 
 test("Test whether API root URL is available.", async () => {
   const res = await axios.get(`${rootUrl}/api`);
-  expect(res.status).toEqual("Hello there!");
+  expect(res.data).toEqual("Hello there!");
 });
 
-describe("When users go to the website,", () => {
-  test("Users will see project name", async () => {
+describe("When users navigate to the website,", () => {
+  test("Users can see project name", async () => {
     const projectName = await page.$eval(
       ".navbar-item .is-size-4",
       (elem) => elem.innerHTML
     );
     expect(projectName).toEqual("CatchyPass");
   });
-  // TODO Can navigate to tutorial
-  // TODO Can navigate to about
+
+  test("Users can see tutorial page", async () => {
+    await page.hover(".navbar-link");
+    await page.click(`.navbar-item[href="/tutorial"]`);
+    const tutorialTitle = await page.$eval(
+      "#tutorial-title",
+      (elem) => elem.innerHTML
+    );
+    expect(tutorialTitle).toEqual("CatchyPass - Tutorial");
+  });
+
+  test("Users can see about page", async () => {
+    await page.hover(".navbar-link");
+    await page.click(`.navbar-item[href="/about"]`);
+    const tutorialTitle = await page.$eval(
+      "#about-title",
+      (elem) => elem.innerHTML
+    );
+    expect(tutorialTitle).toEqual("CatchyPass - About");
+  });
 });
 
 describe("Users can use random keywords", () => {

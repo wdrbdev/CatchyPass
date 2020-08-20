@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: asia.gcr.io/catchypass-dev/worker-stg:ENV_VARS_SHORT_SHA
+          image: asia.gcr.io/catchypass-dev/worker-test:ENV_VARS_SHORT_SHA
           imagePullPolicy: IfNotPresent
           env:
             - name: REDIS_HOST
