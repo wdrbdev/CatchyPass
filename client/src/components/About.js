@@ -4,7 +4,9 @@ const About = () => {
   return (
     <div className="container">
       <div className="mt-2">
-        <div className="title is-3">CatchyPass - About</div>
+        <div d="about-title" className="title is-3">
+          CatchyPass - About
+        </div>
         <div className="is-size-5">
           A web application for strong and catchy password generation from
           keyword input with natural language processing. The goal of the app is
