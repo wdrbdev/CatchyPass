@@ -1,17 +1,4 @@
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+# Modified from https://github.com/GoogleCloudPlatform/cloudbuild-integration-testing/blob/master/cloudbuild.gke-per-test.yaml
 steps:
   - id: "clone from GitHub repo"
     name: gcr.io/cloud-builders/git
@@ -134,7 +121,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/server-deployment.yaml
-        cat ./k8s/staging/deployment/server-deployment.yaml
+        # cat ./k8s/staging/deployment/server-deployment.yaml
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -165,8 +152,8 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
-        cat ./k8s/staging/deployment/worker-deployment.yaml
-    waitFor: ["push worker docker"] # start immediately
+        # cat ./k8s/staging/deployment/worker-deployment.yaml
+    waitFor: ["push worker docker"]
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -196,7 +183,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/client-deployment.yaml
-        cat ./k8s/staging/deployment/client-deployment.yaml
+        # cat ./k8s/staging/deployment/client-deployment.yaml
     waitFor: ["build client docker"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
@@ -206,6 +193,7 @@ steps:
       - "./k8s/staging/deployment/client-deployment.yaml"
     waitFor: ["replace tag for client"]
 
+  # Integration testing
   - id: "get endpoint"
     name: "gcr.io/cloud-builders/kubectl"
     entrypoint: "bash"
@@ -214,7 +202,7 @@ steps:
       - |
         # determine which node port the service was exposed on
         get_nodeport() {
-          kubectl get service cookieshop-web -o=jsonpath='{.spec.ports[0].nodePort}' 
+          kubectl get service  my-nginx-nginx-ingress-controller -o=jsonpath='{.spec.ports[0].nodePort}' 
         }
         until [[ -n "$(get_nodeport)" ]]; do
             echo "querying for nodeport"
@@ -226,27 +214,65 @@ steps:
         # (and doesn't require additional billable resources)
         # (we can reasonably expect the node to be durable enough to last until the test completes)
         get_nodeip() {
-          kubectl get nodes --output jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}'
+          kubectl get service my-nginx-nginx-ingress-controller  --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
         }
         until [[ -n "$(get_nodeip)" ]]; do
             echo "querying for nodeip"
             sleep 3
         done
         echo $(get_nodeip) > _nodeip # save ip for use in next step
-        echo $(cat _nodeip)
     waitFor: ["deploy client"]
 
-  - id: "integration tests"
-    name: "gcr.io/cloud-builders/curl"
-    entrypoint: "/bin/bash"
+  # e2e job
+  - id: "build e2e docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+      - "./e2e"
+    waitFor: ["deploy client"]
+  - id: "push e2e docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+    waitFor: ["build e2e docker"]
+  - id: "replace tag for e2e"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
     args:
       - "-c"
       - |
-        ### -r = retries; -i = interval; -k = keyword to search for ###
-        ./test/test-connection.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport)
-        ./test/test-content.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport) -k 'Chocolate Chip'
-    waitFor: ["get endpoint"]
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
+        sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
+        cat ./k8s/staging/test/e2e.yaml
+    waitFor: ["push e2e docker"]
+  - id: "deploy e2e"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/test/e2e.yaml"
+    waitFor: ["replace tag for e2e"]
+  - id: "wait e2e to finish"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "wait"
+      - "--for=condition=complete"
+      - "job/e2e"
+      - "--timeout=10m"
+    waitFor: ["deploy e2e"]
+  - id: "show log of jobs"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "logs"
+      - "-f"
+      - "job/e2e"
+      - "--all-containers=true"
+    waitFor: ["wait e2e to finish"]
 
+  # cleaning up
   - id: "delete cluster"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -254,7 +280,7 @@ steps:
       - "-c"
       - |
         gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
-    waitFor: ["integration tests"]
+    waitFor: ["show log of jobs"]
 
 options:
   env:
@@ -262,6 +288,5 @@ options:
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
-    - RESERVED_IP=35.220.154.72
 
-timeout: 60m0s
+timeout: 30m0s
