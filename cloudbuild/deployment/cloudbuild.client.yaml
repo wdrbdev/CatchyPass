@@ -18,7 +18,7 @@ steps:
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/deployment/client-deployment.yaml
+      - --filename=./k8s/production/deployment/client-deployment.yaml
       - --image=asia.gcr.io/catchypass-dev/client-prod:$SHORT_SHA
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}

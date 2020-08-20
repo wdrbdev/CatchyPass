@@ -134,7 +134,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/server-deployment.yaml
-        # cat ./k8s/staging/deployment/server-deployment.yaml
+        cat ./k8s/staging/deployment/server-deployment.yaml
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -165,8 +165,8 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
-        # cat ./k8s/staging/deployment/worker-deployment.yaml
-    waitFor: ["push worker docker"]
+        cat ./k8s/staging/deployment/worker-deployment.yaml
+    waitFor: ["push worker docker"] # start immediately
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -196,7 +196,7 @@ steps:
       - "-c"
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/client-deployment.yaml
-        # cat ./k8s/staging/deployment/client-deployment.yaml
+        cat ./k8s/staging/deployment/client-deployment.yaml
     waitFor: ["build client docker"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
@@ -206,7 +206,6 @@ steps:
       - "./k8s/staging/deployment/client-deployment.yaml"
     waitFor: ["replace tag for client"]
 
-  # Integration testing
   - id: "get endpoint"
     name: "gcr.io/cloud-builders/kubectl"
     entrypoint: "bash"
@@ -215,20 +214,19 @@ steps:
       - |
         # determine which node port the service was exposed on
         get_nodeport() {
-          kubectl get service  my-nginx-nginx-ingress-controller -o=jsonpath='{.spec.ports[0].nodePort}' 
+          kubectl get service cookieshop-web -o=jsonpath='{.spec.ports[0].nodePort}' 
         }
         until [[ -n "$(get_nodeport)" ]]; do
             echo "querying for nodeport"
             sleep 3
         done
         echo "$(get_nodeport)" > _nodeport # save port for use in next step
-        echo $(cat _nodeport)
         # grab the public IP of a random node
         # (why do this instead of a load balancer? b/c it's faster to instantiate)
         # (and doesn't require additional billable resources)
         # (we can reasonably expect the node to be durable enough to last until the test completes)
         get_nodeip() {
-          kubectl get service my-nginx-nginx-ingress-controller  --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          kubectl get nodes --output jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}'
         }
         until [[ -n "$(get_nodeip)" ]]; do
             echo "querying for nodeip"
@@ -238,46 +236,16 @@ steps:
         echo $(cat _nodeip)
     waitFor: ["deploy client"]
 
-  # e2e job
-  - id: "build e2e docker"
-    name: "gcr.io/cloud-builders/docker"
-    args:
-      - "build"
-      - "-t"
-      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
-      - "./e2e"
-    waitFor: ["deploy client"]
-  - id: "push e2e docker"
-    name: "gcr.io/cloud-builders/docker"
-    args:
-      - "push"
-      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
-    waitFor: ["build e2e docker"]
-  - id: "replace tag for e2e"
-    name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: "bash"
+  - id: "integration tests"
+    name: "gcr.io/cloud-builders/curl"
+    entrypoint: "/bin/bash"
     args:
       - "-c"
       - |
-        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
-        sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
-        cat ./k8s/staging/test/e2e.yaml
-    waitFor: ["push e2e docker"]
-  - id: "deploy e2e"
-    name: "gcr.io/cloud-builders/kubectl"
-    args:
-      - "apply"
-      - "-f"
-      - "./k8s/staging/test/e2e.yaml"
-    waitFor: ["replace tag for e2e"]
-  - id: "wait e2e to finish"
-    name: "gcr.io/cloud-builders/kubectl"
-    args:
-      - "wait"
-      - "--for=condition=complete"
-      - "job/e2e"
-      - "--timeout=10m"
-    waitFor: ["deploy e2e"]
+        ### -r = retries; -i = interval; -k = keyword to search for ###
+        ./test/test-connection.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport)
+        ./test/test-content.sh -r 20 -i 3 -u http://$(cat _nodeip):$(cat _nodeport) -k 'Chocolate Chip'
+    waitFor: ["get endpoint"]
 
   - id: "delete cluster"
     name: "gcr.io/cloud-builders/gcloud"
@@ -286,7 +254,7 @@ steps:
       - "-c"
       - |
         gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
-    waitFor: ["wait e2e to finish"]
+    waitFor: ["integration tests"]
 
 options:
   env:
@@ -294,5 +262,6 @@ options:
     - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
+    - RESERVED_IP=35.220.154.72
 
-timeout: 20m0s
+timeout: 60m0s
