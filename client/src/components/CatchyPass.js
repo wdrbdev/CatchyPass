@@ -11,7 +11,7 @@ const CatchyPass = () => {
   const INTERVAL_TIME = 2000;
 
   const [status, setStatus] = useState(
-    "Please enter 0-2 keyword(s). \nIf no input provided, a random result would be generated."
+    `Please enter 0 - ${nInput} keyword(s). \nIf no input provided, a random result would be generated.`
   );
   const [sentenceId, setSentenceId] = useState(null);
   const [sentence, setSentence] = useState("\n");
@@ -102,8 +102,8 @@ const CatchyPass = () => {
     return indexArray.map(function (index) {
       let keywordId = `keyword ${index + 1}`;
       return (
-        <div className="field" key={keywordId}>
-          <p className="control is-expanded">
+        <div className="field mr-2" key={keywordId}>
+          <p className="control">
             <input
               type="text"
               placeholder={keywordId}
@@ -113,7 +113,7 @@ const CatchyPass = () => {
                 maxLength: 15,
                 pattern: /^[a-z]+$/,
               })}
-              className="input is-medium column is-half"
+              className="input"
             />
           </p>
           <p className="has-text-danger">
@@ -212,84 +212,84 @@ const CatchyPass = () => {
   };
 
   return (
-    <div className="container">
-      <div className="columns">
-        <div className="column mt-2">
-          <div className="title is-3">Keywords for password generation</div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {keywordsInput(nInput)}
-            <button
-              id="submit-btn"
-              type="submit"
-              className={`button is-info ${isLoading} mr-2`}
+    <div className="container mt-2 has-text-centered">
+      <div className="has-text-primary has-text-weight-semibold">
+        Random Password Generator
+      </div>
+      <div className="title is-2">Password Generation from Keyword Input</div>
+      <div className="subtitle is-5">
+        Generate strong and easy-to-remember password based on limericks written
+        through the keywords
+      </div>
+      <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="columns is-centered">
+          {keywordsInput(nInput)}
+          <button
+            id="submit-btn"
+            type="submit"
+            className={`button is-info ${isLoading} mr-2`}
+          >
+            Submit
+          </button>
+          <button
+            id="randomly-submit-btn"
+            type="button"
+            className={`button is-primary ${isLoading} mr-2`}
+            onClick={onRandomSubmit}
+          >
+            Use Random Keywords
+          </button>
+        </form>
+      </div>
+      <br />
+      <div className="columns is-centered">
+        <div className="column is-8">
+          <article className="message is-link ">
+            <div className="message-header">Limerick Result:</div>
+            <div
+              id="limerick-result"
+              className="message-body columns"
+              style={{ whiteSpace: "pre-line" }}
             >
-              Submit
-            </button>
-            <button
-              id="randomly-submit-btn"
-              type="button"
-              className={`button is-primary ${isLoading}`}
-              onClick={onRandomSubmit}
-            >
-              Use Random Keywords
-            </button>
-          </form>
+              <div className="column is-11">{sentence}</div>
+              <div className="column is-1">
+                <CopyToClipboard text={sentence}>
+                  <button className="copy-btn button is-right is-small is-hidden">
+                    <i className="fas fa-copy"></i>
+                  </button>
+                </CopyToClipboard>
+              </div>
+            </div>
+          </article>
         </div>
-
-        <div className="column mt-2">
-          <div>
-            <article className="message">
-              <div className="message-header">Status:</div>
-              <div className="message-body">{status}</div>
-            </article>
-          </div>
-          <br />
-          <div>
-            <article className="message is-link">
-              <div className="message-header">Limerick Result:</div>
-              <div
-                id="limerick-result"
-                className="message-body columns"
-                style={{ whiteSpace: "pre-line" }}
-              >
-                <div className="column is-11">{sentence}</div>
+      </div>
+      <br />
+      <div className="columns is-centered">
+        <div className="column is-8">
+          <article className="message is-link">
+            <div className="message-header">
+              Password Result:
+              <span id="dropdown" className="is-hidden">
+                {dropdown()}
+              </span>
+            </div>
+            <div
+              id="psw-result"
+              className="message-body"
+              style={{ whiteSpace: "pre-line" }}
+            >
+              <div id="password" className="columns">
+                <div className="column is-11">{password}</div>
                 <div className="column is-1">
-                  <CopyToClipboard text={sentence}>
+                  <CopyToClipboard text={password}>
                     <button className="copy-btn button is-right is-small is-hidden">
                       <i className="fas fa-copy"></i>
                     </button>
                   </CopyToClipboard>
                 </div>
               </div>
-            </article>
-          </div>
-          <br />
-          <div>
-            <article className="message is-link">
-              <div className="message-header">
-                Password Result:
-                <span id="dropdown" className="is-hidden">
-                  {dropdown()}
-                </span>
-              </div>
-              <div
-                id="psw-result"
-                className="message-body"
-                style={{ whiteSpace: "pre-line" }}
-              >
-                <div id="password" className="columns">
-                  <div className="column is-11">{password}</div>
-                  <div className="column is-1">
-                    <CopyToClipboard text={password}>
-                      <button className="copy-btn button is-right is-small is-hidden">
-                        <i className="fas fa-copy"></i>
-                      </button>
-                    </CopyToClipboard>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
+            </div>
+          </article>
         </div>
       </div>
     </div>
