@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: asia.gcr.io/catchypass-dev/client-stg:ENV_VARS_SHORT_SHA
+          image: asia.gcr.io/catchypass-dev/client-test:ENV_VARS_SHORT_SHA
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
