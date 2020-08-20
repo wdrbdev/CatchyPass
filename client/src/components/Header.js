@@ -43,13 +43,13 @@ const Header = () => {
           <img src={logo} alt="CatchyPass" width="auto" height="100%" />
           <strong className="is-size-4 px-1">CatchyPass</strong>
         </a>
-        <div className="navbar-burger burger">
+        <div className="navbar-burger burger" data-target="navMenu">
           <span></span>
           <span></span>
           <span></span>
         </div>
       </div>
-      <div className="navbar-menu">
+      <div id="navMenu" className="navbar-menu">
         <div className="navbar-start">
           <div className="navbar-item has-dropdown is-hoverable">
             <a className="navbar-link" href="#">
