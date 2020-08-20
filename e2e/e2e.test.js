@@ -1,6 +1,10 @@
 const axios = require("axios");
 const config = require("./config");
-const rootUrl = `http://${config.reservedIp}`;
+const rootUrl = "http://staging.albertapp.codes"; //`http://${config.reservedIp}`
+
+const sleep = (ms) => {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+};
 
 beforeEach(async () => {
   jest.setTimeout(100000);
@@ -24,5 +28,61 @@ describe("When users go to the website,", () => {
       (elem) => elem.innerHTML
     );
     expect(projectName).toEqual("CatchyPass");
+  });
+  // TODO Can navigate to tutorial
+  // TODO Can navigate to about
+});
+
+describe("Users can use random keywords", () => {
+  beforeEach(async () => {
+    await page.click("button#randomly-submit-btn");
+    sleep(20000);
+  });
+
+  test("And generate limerick with 5 lines.", async () => {
+    const limerickResult = await page.$eval(
+      "#limerick-result .is-11",
+      (elem) => elem.innerHTML
+    );
+    expect(limerickResult.length > 1).toBeTruthy();
+  });
+
+  test("And generate password.", async () => {
+    const passwordResult = await page.$eval(
+      "#password .is-11",
+      (elem) => elem.innerHTML
+    );
+    console.log(passwordResult);
+
+    expect(passwordResult.length > 1).toBeTruthy();
+  });
+});
+
+describe("Users can type 1 keyword", () => {
+  beforeEach(async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "test";
+    });
+    await page.click("button#submit-btn");
+    sleep(20000);
+  });
+
+  test("And generate limerick.", async () => {
+    const limerickResult = await page.$eval(
+      "#limerick-result .is-11",
+      (elem) => elem.innerHTML
+    );
+    console.log(limerickResult);
+    expect(limerickResult.length > 1).toBeTruthy();
+  });
+
+  test("And generate password.", async () => {
+    const passwordResult = await page.$eval(
+      "#password .is-11",
+      (elem) => elem.innerHTML
+    );
+    console.log(passwordResult);
+
+    expect(passwordResult.length > 1).toBeTruthy();
   });
 });
