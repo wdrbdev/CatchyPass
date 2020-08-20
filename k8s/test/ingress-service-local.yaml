@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - staging.albertapp.codes
+        - test.albertapp.codes
       secretName: tls-secret
   rules:
-    - host: staging.albertapp.codes
+    - host: test.albertapp.codes
       http:
         paths:
           - path: /?(.*)
