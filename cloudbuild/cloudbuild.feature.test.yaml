@@ -166,7 +166,7 @@ steps:
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
         # cat ./k8s/staging/deployment/worker-deployment.yaml
-    waitFor: ["push worker docker"] # start immediately
+    waitFor: ["push worker docker"]
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -238,6 +238,7 @@ steps:
         echo $(cat _nodeip)
     waitFor: ["deploy client"]
 
+  # e2e job
   - id: "build e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -261,8 +262,7 @@ steps:
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
         sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
         cat ./k8s/staging/test/e2e.yaml
-    # waitFor: ["push e2e docker"] # start immediately
-    waitFor: ["-"] # start immediately
+    waitFor: ["push e2e docker"]
   - id: "deploy e2e"
     name: "gcr.io/cloud-builders/kubectl"
     args:
