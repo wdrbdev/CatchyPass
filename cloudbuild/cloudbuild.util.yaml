@@ -5,7 +5,7 @@ steps:
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
-      - --filename=./k8s/util
+      - --filename=./k8s/production/util
       - --location=${_LOCATION}
       - --cluster=${_CLUSTER}
       - --timeout=10m0s

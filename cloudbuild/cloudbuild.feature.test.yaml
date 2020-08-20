@@ -287,10 +287,12 @@ steps:
       - |
         gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
     waitFor: ["wait e2e to finish"]
+
 options:
   env:
     # location/name of GKE cluster (used by all kubectl commands)
-    - CLOUDSDK_COMPUTE_ZONE=asia-east1-a
+    - CLOUDSDK_COMPUTE_ZONE=asia-east2-a
+    - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
 
 timeout: 20m0s
