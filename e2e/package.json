@@ -10,13 +10,14 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --ci"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
     "jest": "^26.1.0",
+    "jest-puppeteer": "^4.4.0",
     "mongoose": "^5.9.21",
     "puppeteer": "^5.0.0"
   }
