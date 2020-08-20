@@ -54,7 +54,7 @@ describe("When users navigate to the website,", () => {
 describe("Users can use random keywords", () => {
   beforeEach(async () => {
     await page.click("button#randomly-submit-btn");
-    sleep(20000);
+    sleep(60000);
   });
 
   test("And generate limerick with 5 lines.", async () => {
@@ -82,7 +82,7 @@ describe("Users can type 1 keyword", () => {
       elem.value = "test";
     });
     await page.click("button#submit-btn");
-    sleep(20000);
+    sleep(60000);
   });
 
   test("And generate limerick.", async () => {
