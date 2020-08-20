@@ -279,14 +279,14 @@ steps:
       - "--timeout=10m"
     waitFor: ["deploy e2e"]
 
-  - id: "delete cluster"
-    name: "gcr.io/cloud-builders/gcloud"
-    entrypoint: "bash"
-    args:
-      - "-c"
-      - |
-        gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
-    waitFor: ["wait e2e to finish"]
+  # - id: "delete cluster"
+  #   name: "gcr.io/cloud-builders/gcloud"
+  #   entrypoint: "bash"
+  #   args:
+  #     - "-c"
+  #     - |
+  #       gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
+  #   waitFor: ["wait e2e to finish"]
 
 options:
   env:
@@ -295,4 +295,4 @@ options:
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
 
-timeout: 20m0s
+timeout: 30m0s
