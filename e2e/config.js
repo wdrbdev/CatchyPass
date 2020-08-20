@@ -1,3 +1,3 @@
 module.exports = {
-  minikubeIP: process.env.MINIKUBE_IP,
+  reservedIp: process.env.RESERVED_IP,
 };
