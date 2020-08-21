@@ -98,6 +98,7 @@ steps:
       - "./k8s/test/service/"
     waitFor: ["deploy ingress local service"]
 
+  # server
   - id: "compile server"
     name: "gcr.io/cloud-builders/npm"
     dir: "server"
@@ -154,8 +155,9 @@ steps:
     name: "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
     entrypoint: /bin/sh
     args:
-      - -c
-      - "python /worker/unit_testing/py"
+      - "-c"
+      - |
+        python /worker/unit_testing.py
     waitFor:
       - ["worker unit test"]
   - id: "push worker docker"
