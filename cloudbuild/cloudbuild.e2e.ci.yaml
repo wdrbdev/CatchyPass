@@ -115,7 +115,7 @@ steps:
     waitFor: ["build server docker"]
   - id: "server unit test"
     name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    entrypoint: "sh"
+    entrypoint: "/bin/sh"
     args:
       - "npm run test"
     waitFor: ["push server docker"]
@@ -153,7 +153,7 @@ steps:
     waitFor: ["build worker docker"]
   - id: "worker unit test"
     name: "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
-    entrypoint: "sh"
+    entrypoint: "/bin/sh"
     args:
       - "python unit_testing.py"
     waitFor: ["push worker docker"]
@@ -191,7 +191,7 @@ steps:
     waitFor: ["build client docker"]
   - id: "client unit test"
     name: "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
-    entrypoint: "sh"
+    entrypoint: "/bin/sh"
     args:
       - "npm run test"
     waitFor: ["push client docker"]
