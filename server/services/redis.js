@@ -40,7 +40,7 @@ module.exports = () => {
       let passwordResult = [
         sent2pass(sentenceResult, keywords, "", false), // Only upper case
         sent2pass(sentenceResult, keywords), // Upper case and number
-        sent2pass(sentenceResult, keywords, "."), // Upper case ,number and special characters
+        sent2pass(sentenceResult, keywords, "."), // Upper case, number and special characters
       ];
       await Result.findByIdAndUpdate(
         _id,
