@@ -159,7 +159,7 @@ steps:
       - |
         python /worker/unit_testing.py
     waitFor:
-      - ["worker unit test"]
+      - ["build worker docker"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
