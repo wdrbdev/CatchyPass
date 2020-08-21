@@ -109,7 +109,7 @@ steps:
     waitFor: ["patch k8s config"]
   - id: "server unit test"
     name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    entrypoint: "bash"
+    entrypoint: "/bin/sh"
     args:
       - "-c"
       - |
@@ -188,7 +188,7 @@ steps:
     waitFor: ["patch k8s config"]
   - id: "client unit test"
     name: "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
-    entrypoint: "bash"
+    entrypoint: "/bin/sh"
     args:
       - "-c"
       - |
