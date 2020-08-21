@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon npm run start",
-    "test": "jest"
+    "test": "jest --ci"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "jest": "^26.1.0",
+    "jest": "^26.4.1",
     "mongoose": "^5.9.21",
     "redis": "^3.0.2",
     "use-interval": "^1.2.1"
