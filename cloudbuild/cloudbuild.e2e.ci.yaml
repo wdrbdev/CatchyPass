@@ -98,8 +98,19 @@ steps:
       - "./k8s/test/service/"
     waitFor: ["deploy ingress local service"]
 
-  # server docker
-  # Build images
+  - id: "compile server"
+    name: "gcr.io/cloud-builders/npm"
+    dir: "server"
+    args:
+      - "install"
+    waitFor: ["patch k8s config"]
+  - id: "server unit tests"
+    name: "gcr.io/cloud-builders/npm"
+    dir: "server"
+    args:
+      - "run"
+      - "test"
+    waitFor: ["compile server"]
   - id: "build server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -107,7 +118,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
-    waitFor: ["patch k8s config"]
+    waitFor: ["server unit tests"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -138,7 +149,15 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
       - "./worker"
-    waitFor: ["deploy server"]
+    waitFor: ["patch k8s config"]
+  - id: "worker unit test"
+    name: "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
+    entrypoint: /bin/sh
+    args:
+      - -c
+      - "python /worker/unit_testing/py"
+    waitFor:
+      - ["worker unit test"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -163,6 +182,19 @@ steps:
     waitFor: ["replace tag for worker"]
 
   # client
+  - id: "compile client"
+    name: "gcr.io/cloud-builders/npm"
+    dir: "client"
+    args:
+      - "install"
+    waitFor: ["patch k8s config"]
+  - id: "client unit tests"
+    name: "gcr.io/cloud-builders/npm"
+    dir: "client"
+    args:
+      - "run"
+      - "test"
+    waitFor: ["compile client"]
   - id: "build client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -170,7 +202,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
       - "./client"
-    waitFor: ["deploy worker"]
+    waitFor: ["client unit tests"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
