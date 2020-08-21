@@ -4,7 +4,9 @@ const Tutorial = () => {
   return (
     <div className="container">
       <div className="mt-2">
-        <div id="tutorial-title" className="title is-3">CatchyPass - Tutorial</div>
+        <div id="tutorial-title" className="title is-3">
+          CatchyPass - Tutorial
+        </div>
         <div className="is-size-5">
           <p>
             Users could type keyword input and press the submit button to
