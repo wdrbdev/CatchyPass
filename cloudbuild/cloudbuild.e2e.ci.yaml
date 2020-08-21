@@ -107,20 +107,18 @@ steps:
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
     waitFor: ["patch k8s config"]
-  - id: "server unit test"
-    name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    entrypoint: "/bin/sh"
-    args:
-      - "-c"
-      - |
-        npm run test
-    waitFor: ["build server docker"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    waitFor: ["server unit test"]
+    waitFor: ["build server docker"]
+  - id: "server unit test"
+    name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
+    entrypoint: "sh"
+    args:
+      - "npm run test"
+    waitFor: ["push server docker"]
   - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -129,6 +127,7 @@ steps:
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/server-deployment.yaml
         # cat ./k8s/test/deployment/server-deployment.yaml
+    waitFor: ["server unit test"]
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -146,20 +145,18 @@ steps:
       - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
       - "./worker"
     waitFor: ["patch k8s config"]
-  - id: "worker unit test"
-    name: "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
-    entrypoint: /bin/sh
-    args:
-      - "-c"
-      - |
-        python /worker/unit_testing.py
-    waitFor: ["build worker docker"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
-    waitFor: ["worker unit test"]
+    waitFor: ["build worker docker"]
+  - id: "worker unit test"
+    name: "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
+    entrypoint: "sh"
+    args:
+      - "python unit_testing.py"
+    waitFor: ["push worker docker"]
   - id: "replace tag for worker"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -168,7 +165,7 @@ steps:
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/worker-deployment.yaml
         # cat ./k8s/test/deployment/worker-deployment.yaml
-    waitFor: ["push worker docker"]
+    waitFor: ["worker unit test"]
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
@@ -186,20 +183,18 @@ steps:
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
       - "./client"
     waitFor: ["patch k8s config"]
-  - id: "client unit test"
-    name: "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
-    entrypoint: "/bin/sh"
-    args:
-      - "-c"
-      - |
-        npm run test
-    waitFor: ["build client docker"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
-    waitFor: ["client unit test"]
+    waitFor: ["build client docker"]
+  - id: "client unit test"
+    name: "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+    entrypoint: "sh"
+    args:
+      - "npm run test"
+    waitFor: ["push client docker"]
   - id: "replace tag for client"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -208,7 +203,7 @@ steps:
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/client-deployment.yaml
         # cat ./k8s/test/deployment/client-deployment.yaml
-    waitFor: ["build client docker"]
+    waitFor: ["client unit test"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
     args:
