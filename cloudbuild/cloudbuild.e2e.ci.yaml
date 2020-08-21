@@ -99,19 +99,6 @@ steps:
     waitFor: ["deploy ingress local service"]
 
   # server
-  - id: "compile server"
-    name: "gcr.io/cloud-builders/npm"
-    dir: "server"
-    args:
-      - "install"
-    waitFor: ["patch k8s config"]
-  - id: "server unit tests"
-    name: "gcr.io/cloud-builders/npm"
-    dir: "server"
-    args:
-      - "run"
-      - "test"
-    waitFor: ["compile server"]
   - id: "build server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -119,13 +106,21 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
-    waitFor: ["server unit tests"]
+    waitFor: ["patch k8s config"]
+  - id: "client unit test"
+    name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        npm run test
+    waitFor: ["build server docker"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    waitFor: ["build server docker"]
+    waitFor: ["client unit test"]
   - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
@@ -183,19 +178,6 @@ steps:
     waitFor: ["replace tag for worker"]
 
   # client
-  - id: "compile client"
-    name: "gcr.io/cloud-builders/npm"
-    dir: "client"
-    args:
-      - "install"
-    waitFor: ["patch k8s config"]
-  - id: "client unit tests"
-    name: "gcr.io/cloud-builders/npm"
-    dir: "client"
-    args:
-      - "run"
-      - "test"
-    waitFor: ["compile client"]
   - id: "build client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -203,12 +185,21 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
       - "./client"
-    waitFor: ["client unit tests"]
+    waitFor: ["patch k8s config"]
+  - id: "client unit test"
+    name: "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        npm run test
+    waitFor: ["build client docker"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+    waitFor: ["client unit test"]
   - id: "replace tag for client"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
