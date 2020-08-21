@@ -5,6 +5,8 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+RUN npm run test
+
 FROM nginx
 EXPOSE 3000
 COPY --from=0 /catchypass/build /usr/share/nginx/html
