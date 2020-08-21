@@ -107,7 +107,7 @@ steps:
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
     waitFor: ["patch k8s config"]
-  - id: "client unit test"
+  - id: "server unit test"
     name: "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
     entrypoint: "bash"
     args:
@@ -120,7 +120,7 @@ steps:
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
-    waitFor: ["client unit test"]
+    waitFor: ["server unit test"]
   - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
