@@ -158,14 +158,13 @@ steps:
       - "-c"
       - |
         python /worker/unit_testing.py
-    waitFor:
-      - ["build worker docker"]
+    waitFor: ["build worker docker"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
       - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
-    waitFor: ["build worker docker"]
+    waitFor: ["worker unit test"]
   - id: "replace tag for worker"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
