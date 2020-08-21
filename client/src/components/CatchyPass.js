@@ -223,11 +223,15 @@ const CatchyPass = () => {
       </div>
       <div>
         <form onSubmit={handleSubmit(onSubmit)} className="columns is-centered">
+          <p className="mr-2 has-text-grey is-size-7">
+            Enter keyword(s) here <br />
+            to generate password
+          </p>
           {keywordsInput(nInput)}
           <button
             id="submit-btn"
             type="submit"
-            className={`button is-info ${isLoading} mr-2`}
+            className={`button is-link ${isLoading} mr-2`}
           >
             Submit
           </button>
