@@ -52,12 +52,12 @@ steps:
     waitFor: ["deploy ingress-nginx"]
 
   # ingress setup
-  - id: "deploy ingress local service"
+  - id: "deploy ingress test service"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/test/ingress-service-local.yaml"
+      - "./k8s/test/ingress-service-test.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # mongo docker
@@ -96,7 +96,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/test/service/"
-    waitFor: ["deploy ingress local service"]
+    waitFor: ["deploy ingress test service"]
 
   # server
   - id: "build server docker"
@@ -222,7 +222,7 @@ steps:
             sleep 3
         done
         echo $(get_nodeip) > _nodeip # save ip for use in next step
-    waitFor: ["deploy client"]
+    waitFor: ["deploy worker"]
 
   # e2e job
   - id: "build e2e docker"
@@ -232,7 +232,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
       - "./e2e"
-    waitFor: ["deploy client"]
+    waitFor: ["deploy worker"]
   - id: "push e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -247,7 +247,6 @@ steps:
       - |
         sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/test/e2e.yaml
         sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/test/test/e2e.yaml
-        cat ./k8s/test/test/e2e.yaml
     waitFor: ["push e2e docker"]
   - id: "deploy e2e"
     name: "gcr.io/cloud-builders/kubectl"
