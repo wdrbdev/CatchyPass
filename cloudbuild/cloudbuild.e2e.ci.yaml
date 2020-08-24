@@ -87,7 +87,7 @@ steps:
       - "apply"
       - "-f"
       - "./k8s/test/deployment/redis-deployment.yaml"
-    waitFor: ["patch k8s config"]
+    waitFor: ["deploy mongo"]
 
   # service
   - id: "deploy services"
@@ -106,7 +106,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
-    waitFor: ["patch k8s config"]
+    waitFor: ["deploy services"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -138,7 +138,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
       - "./worker"
-    waitFor: ["patch k8s config"]
+    waitFor: ["deploy services"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -170,7 +170,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
       - "./client"
-    waitFor: ["patch k8s config"]
+    waitFor: ["deploy services"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -225,6 +225,13 @@ steps:
     waitFor: ["deploy worker"]
 
   # e2e job
+  - id: "wait for worker"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "wait"
+      - "--for=condition=available"
+      - "deployment/worker-deployment"
+      - "--timeout=10m"
   - id: "build e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -232,7 +239,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
       - "./e2e"
-    waitFor: ["deploy worker"]
+    waitFor: ["wait for worker"]
   - id: "push e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
