@@ -11,11 +11,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - albertapp.codes
-        - www.albertapp.codes
+        - catchypass.me
+        - www.catchypass.me
       secretName: tls-secret
   rules:
-    - host: albertapp.codes
+    - host: catchypass.me
       http:
         paths:
           - path: /?(.*)
@@ -26,7 +26,7 @@ spec:
             backend:
               serviceName: server-clusterip
               servicePort: 5000
-    - host: www.albertapp.codes
+    - host: www.catchypass.me
       http:
         paths:
           - path: /?(.*)
