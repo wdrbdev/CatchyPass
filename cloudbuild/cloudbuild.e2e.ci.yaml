@@ -268,7 +268,7 @@ steps:
       - "wait"
       - "--for=condition=complete"
       - "job/e2e"
-      - "--timeout=10m"
+      - "--timeout=20m"
     waitFor: ["deploy e2e"]
   - id: "show log of jobs"
     name: "gcr.io/cloud-builders/kubectl"
@@ -296,4 +296,4 @@ options:
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
 
-timeout: 30m0s
+timeout: 40m0s
