@@ -1,6 +1,6 @@
 const axios = require("axios");
 const config = require("./config");
-const rootUrl = "http://albertapp.codes"; //"http://test.albertapp.codes";
+const rootUrl = "http://test.catchypass.me";
 
 const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
