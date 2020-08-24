@@ -9,7 +9,7 @@ RUN git lfs install
 RUN git clone https://github.com/lightcoker/CatchyPass.git
 RUN cp -r CatchyPass/worker/data .
 
-EXPOSE 8888
+# EXPOSE 8888
 
 RUN /usr/bin/python3 -m pip install --upgrade pip && \
   pip install -r requirements.txt --use-feature=2020-resolver
@@ -25,4 +25,4 @@ RUN jupyter nbextension enable varInspector/main
 RUN jupyter nbextension enable execute_time/ExecuteTime
 RUN jupyter nbextension enable autosavetime/main
 
-RUN python unit_testing.py
+RUN python unit_testing.py -v
