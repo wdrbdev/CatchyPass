@@ -8,5 +8,5 @@ spec:
     name: cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - albertapp.codes
-    - www.albertapp.codes
+    - catchypass.me
+    - www.catchypass.me

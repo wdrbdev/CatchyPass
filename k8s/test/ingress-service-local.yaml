@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - test.albertapp.codes
+        - test.catchypass.me
       secretName: tls-secret
   rules:
-    - host: test.albertapp.codes
+    - host: test.catchypass.me
       http:
         paths:
           - path: /?(.*)
