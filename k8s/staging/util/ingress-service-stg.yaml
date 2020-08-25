@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.allow-http: "true"
+    cert-manager.io/cluster-issuer: "cluster-issuer"
+spec:
+  tls:
+    - hosts:
+        - staging.catchypass.me
+        - www.catchypass.me
+      secretName: tls-secret
+  rules:
+    - host: staging.catchypass.me
+      http:
+        paths:
+          - path: /?(.*)
+            backend:
+              serviceName: client-clusterip
+              servicePort: 3000
+          - path: /api/?(.*)
+            backend:
+              serviceName: server-clusterip
+              servicePort: 5000

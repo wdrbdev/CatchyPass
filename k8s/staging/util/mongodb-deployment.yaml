@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      volumes:
+        - name: mongodb-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongodb-pvc
+      containers:
+        - name: mongo
+          image: registry.hub.docker.com/library/mongo
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: mongo
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongopassword
+                  key: MONGO_PASSWORD
+          volumeMounts:
+            - name: mongodb-persistent-storage
+              mountPath: /data/db
