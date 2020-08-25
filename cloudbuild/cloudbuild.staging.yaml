@@ -53,7 +53,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
       - "./server"
-    waitFor: ["deploy services"]
+    waitFor: ["deploy service"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -85,7 +85,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
       - "./worker"
-    waitFor: ["deploy services"]
+    waitFor: ["deploy service"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
@@ -117,7 +117,7 @@ steps:
       - "-t"
       - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
       - "./client"
-    waitFor: ["deploy services"]
+    waitFor: ["deploy service"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
