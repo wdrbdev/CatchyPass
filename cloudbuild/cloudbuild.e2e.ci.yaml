@@ -268,7 +268,7 @@ steps:
       - "wait"
       - "--for=condition=complete"
       - "job/e2e"
-      - "--timeout=20m"
+      - "--timeout=30m"
     waitFor: ["deploy e2e"]
   - id: "show log of jobs"
     name: "gcr.io/cloud-builders/kubectl"
