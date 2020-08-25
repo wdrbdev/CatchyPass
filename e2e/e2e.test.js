@@ -56,7 +56,7 @@ describe("When users navigate to the website,", () => {
 describe("Users can use random keywords", () => {
   beforeEach(async () => {
     await page.click("button#randomly-submit-btn");
-    sleep(100000);
+    sleep(180000);
   });
 
   test("And generate limerick with 5 lines.", async () => {
@@ -64,6 +64,7 @@ describe("Users can use random keywords", () => {
       "#limerick-result .is-11",
       (elem) => elem.innerHTML
     );
+    console.log(limerickResult);
     expect(limerickResult.length > 1).toBeTruthy();
   });
 
@@ -73,7 +74,6 @@ describe("Users can use random keywords", () => {
       (elem) => elem.innerHTML
     );
     console.log(passwordResult);
-
     expect(passwordResult.length > 1).toBeTruthy();
   });
 });
@@ -84,7 +84,7 @@ describe("Users can type 1 keyword", () => {
       elem.value = "test";
     });
     await page.click("button#submit-btn");
-    sleep(100000);
+    sleep(180000);
   });
 
   test("And generate limerick.", async () => {
@@ -102,7 +102,6 @@ describe("Users can type 1 keyword", () => {
       (elem) => elem.innerHTML
     );
     console.log(passwordResult);
-
     expect(passwordResult.length > 1).toBeTruthy();
   });
 });
