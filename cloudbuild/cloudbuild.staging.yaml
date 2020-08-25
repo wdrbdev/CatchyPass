@@ -1,0 +1,151 @@
+steps:
+  - id: "clone from GitHub repo"
+    name: gcr.io/cloud-builders/git
+    args:
+      [
+        "clone",
+        "-branch",
+        "feature",
+        "https://github.com/lightcoker/CatchyPass.git",
+      ]
+
+  - id: "patch k8s config"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args: ["-c", 'find k8s -type f | xargs sed -i "s/PROJECT_ID/$PROJECT_ID/g"']
+    waitFor: ["clone from GitHub repo"]
+
+  # mongo docker
+  - id: "set mongo secret"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "create"
+      - "secret"
+      - "generic"
+      - "mongopassword"
+      - "--from-literal"
+      - "MONGO_PASSWORD=${_MONGO_SECRET}"
+    waitFor: ["patch k8s config"]
+
+  # util
+  - id: "deploy util"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/util"
+    waitFor: ["set mongo secret"]
+
+  # service
+  - id: "deploy service"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/service/"
+    waitFor: ["deploy util"]
+
+  # server
+  - id: "build server docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+      - "./server"
+    waitFor: ["deploy services"]
+  - id: "push server docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+    waitFor: ["build server docker"]
+  - id: "replace tag for server"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/app/server-deployment.yaml
+        # cat ./k8s/staging/app/server-deployment.yaml
+    waitFor: ["push server docker"]
+  - id: "deploy server"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/app/server-deployment.yaml"
+    waitFor: ["replace tag for server"]
+
+  # worker
+  - id: "build worker docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+      - "./worker"
+    waitFor: ["deploy services"]
+  - id: "push worker docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+    waitFor: ["build worker docker"]
+  - id: "replace tag for worker"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/app/worker-deployment.yaml
+        # cat ./k8s/staging/app/worker-deployment.yaml
+    waitFor: ["push worker docker"]
+  - id: "deploy worker"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/app/worker-deployment.yaml"
+    waitFor: ["replace tag for worker"]
+
+  # client
+  - id: "build client docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+      - "./client"
+    waitFor: ["deploy services"]
+  - id: "push client docker"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+    waitFor: ["build client docker"]
+  - id: "replace tag for client"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/app/client-deployment.yaml
+        # cat ./k8s/staging/app/client-deployment.yaml
+    waitFor: ["push client docker"]
+  - id: "deploy client"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "apply"
+      - "-f"
+      - "./k8s/staging/app/client-deployment.yaml"
+    waitFor: ["replace tag for client"]
+
+options:
+  env:
+    # location/name of GKE cluster (used by all kubectl commands)
+    - CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a
+    - CLOUDSDK_CONTAINER_CLUSTER=catchypass-stg
+    - CI=true
+
+timeout: 30m0s
