@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node
+  template:
+    metadata:
+      labels:
+        app: node
+    spec:
+      containers:
+        - name: server
+          image: asia.gcr.io/catchypass-dev/server-stg:ENV_VARS_SHORT_SHA
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_HOST
+              value: mongodbnodeport
+            - name: MONGO_USER
+              value: mongo
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongopassword
+                  key: MONGO_PASSWORD
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DATABASE
+              value: Result
+            - name: REDIS_HOST
+              value: redisnodeport
+            - name: REDIS_PORT
+              value: "6379"
