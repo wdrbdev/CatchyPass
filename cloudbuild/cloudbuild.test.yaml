@@ -2,7 +2,13 @@
 steps:
   - id: "clone from GitHub repo"
     name: gcr.io/cloud-builders/git
-    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+    args:
+      [
+        "clone",
+        "-branch",
+        "feature",
+        "https://github.com/lightcoker/CatchyPass.git",
+      ]
 
   - id: "create cluster"
     name: "gcr.io/cloud-builders/gcloud"
