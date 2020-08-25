@@ -2,12 +2,7 @@ steps:
   - id: "clone from GitHub repo"
     name: gcr.io/cloud-builders/git
     args:
-      [
-        "clone",
-        "-branch",
-        "feature",
-        "https://github.com/lightcoker/CatchyPass.git",
-      ]
+      ["clone", "-b", "master", "https://github.com/lightcoker/CatchyPass.git"]
 
   - id: "patch k8s config"
     name: "gcr.io/cloud-builders/gcloud"
