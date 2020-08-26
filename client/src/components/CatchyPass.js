@@ -306,15 +306,15 @@ const CatchyPass = () => {
               + "the last word of the 1st sentence" + "the last word of the 2nd
               sentence" + "the last word of the 5th sentence". Since, according
               to the format of limericks, the last word of 1st, 2nd and 5th
-              sentence would rhyme with one another, the password would be easy
-              to memorize.
+              sentence rhyme with one another, the password would be easier to
+              memorize.
             </p>
             <p>
               - The conversion of characters to number is achieved by
               <a href="https://en.wikipedia.org/wiki/Leet"> Leet</a>, which
-              replace English letter by numbers with similar shape. For example,
-              letter "l" is replaced by number "1". The full conversion rule
-              could be referred as the following:
+              replaces English letter by numbers with similar shape. For
+              example, letter "l" is replaced by number "1". The full conversion
+              rule could be referred as the following:
               <p>
                 <ol
                   type="I"
