@@ -310,8 +310,8 @@ const CatchyPass = () => {
               memorize.
             </p>
             <p>
-              - The conversion of characters to number is achieved by
-              <a href="https://en.wikipedia.org/wiki/Leet"> Leet</a>, which
+              - The conversion of characters to number is achieved by{" "}
+              <a href="https://en.wikipedia.org/wiki/Leet">Leet</a>, which
               replaces English letter by numbers with similar shape. For
               example, letter "l" is replaced by number "1". The full conversion
               rule could be referred as the following:
