@@ -296,6 +296,47 @@ const CatchyPass = () => {
           </article>
         </div>
       </div>
+      <br />
+      <div className="columns is-centered ">
+        <article className="column is-8 has-text-left message">
+          <div className="message-body">
+            <p>Note:</p>
+            <p>
+              - The format of the password is the combination of "keyword input"
+              + "the last word of the 1st sentence" + "the last word of the 2nd
+              sentence" + "the last word of the 5th sentence". Since, according
+              to the format of limericks, the last word of 1st, 2nd and 5th
+              sentence would rhyme with one another, the password would be easy
+              to memorize.
+            </p>
+            <p>
+              - The conversion of characters to number is achieved by
+              <a href="https://en.wikipedia.org/wiki/Leet"> Leet</a>, which
+              replace English letter by numbers with similar shape. For example,
+              letter "l" is replaced by number "1". The full conversion rule
+              could be referred as the following:
+              <p>
+                <ol
+                  type="I"
+                  style={{ "list-style-position": "inside" }}
+                  className="has-text-centered"
+                >
+                  <li>a → 4</li>
+                  <li>b → 8</li>
+                  <li>e → 3</li>
+                  <li>g → 6</li>
+                  <li>l → 1</li>
+                  <li>o → 0</li>
+                  <li>r → 2</li>
+                  <li>s → 5</li>
+                  <li>t → 7</li>
+                  <li>z → 2</li>
+                </ol>
+              </p>
+            </p>
+          </div>
+        </article>
+      </div>
     </div>
   );
 };
