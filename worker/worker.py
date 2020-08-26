@@ -34,7 +34,7 @@ def sentence_result():
                 "sentence",
                 json.dumps({
                     "_id": data["_id"],
-                    "sentenceResult": keyword2text(data['keywords']),
+                    "textResult": keyword2text(data['keywords']),
                     "status": "testing"
                 }))
 
