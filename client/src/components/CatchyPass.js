@@ -13,8 +13,8 @@ const CatchyPass = () => {
   const [status, setStatus] = useState(
     `Please enter 0 - ${nInput} keyword(s). \nIf no input provided, a random result would be generated.`
   );
-  const [sentenceId, setSentenceId] = useState(null);
-  const [sentence, setSentence] = useState("\n");
+  const [textId, setTextId] = useState(null);
+  const [text, setText] = useState("\n");
   const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
   const [isLoading, setIsLoading] = useState("");
@@ -24,16 +24,16 @@ const CatchyPass = () => {
    * Check database regularly
    */
   useInterval(() => {
-    if (sentenceId) {
+    if (textId) {
       async function setResult() {
         let res = await axios.post(
           "/api/result",
           {
-            _id: sentenceId,
+            _id: textId,
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        setSentence(res.data.sentenceResult || "\n");
+        setText(res.data.textResult || "\n");
         setPasswordResult(res.data.passwordResult || []);
 
         if (passwordResult.length > 0) {
@@ -45,7 +45,7 @@ const CatchyPass = () => {
           setStatus("Password result is generated.");
           setIsLoading("");
 
-          setPassword(passwordResult[1]);
+          setPassword(passwordResult[0]);
           setIntervalTime(null); // Stop checking database regularly
         }
       }
@@ -75,11 +75,11 @@ const CatchyPass = () => {
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
 
-    setSentenceId(res.data._id);
+    setTextId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
 
-    setSentence("\n");
+    setText("\n");
     setPassword("\n");
     setIntervalTime(INTERVAL_TIME);
     setPasswordResult([]);
@@ -184,7 +184,7 @@ const CatchyPass = () => {
             <a
               id="password-uppercase"
               href="#"
-              className="dropdown-item"
+              className="dropdown-item is-active"
               onClick={dropdownItemOnClick}
             >
               Including only letters
@@ -192,7 +192,7 @@ const CatchyPass = () => {
             <a
               id="password-number"
               href="#"
-              className="dropdown-item is-active"
+              className="dropdown-item"
               onClick={dropdownItemOnClick}
             >
               Including numbers
@@ -255,9 +255,9 @@ const CatchyPass = () => {
               className="message-body columns"
               style={{ whiteSpace: "pre-line" }}
             >
-              <div className="column is-11">{sentence}</div>
+              <div className="column is-11">{text}</div>
               <div className="column is-1">
-                <CopyToClipboard text={sentence}>
+                <CopyToClipboard text={text}>
                   <button className="copy-btn button is-right is-small is-hidden">
                     <i className="fas fa-copy"></i>
                   </button>
