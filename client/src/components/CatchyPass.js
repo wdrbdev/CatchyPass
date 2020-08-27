@@ -221,104 +221,114 @@ const CatchyPass = () => {
         Generate strong and easy-to-remember password based on limericks written
         through the keywords
       </div>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)} className="columns is-centered">
-          <p className="mr-2 has-text-grey is-size-7">
-            Enter keyword(s) here <br />
-            to generate password
-          </p>
-          {keywordsInput(nInput)}
-          <button
-            id="submit-btn"
-            type="submit"
-            className={`button is-link ${isLoading} mr-2`}
+      <section class="section px-1 py-1">
+        <div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="columns is-centered"
           >
-            Submit
-          </button>
-          <button
-            id="randomly-submit-btn"
-            type="button"
-            className={`button is-primary ${isLoading} mr-2`}
-            onClick={onRandomSubmit}
-          >
-            Use Random Keywords
-          </button>
-        </form>
-      </div>
-      <br />
-      <div className="columns is-centered">
-        <div className="column is-8">
-          <article className="message is-link ">
-            <div className="message-header">Limerick Result:</div>
-            <div
-              id="limerick-result"
-              className="message-body columns"
-              style={{ whiteSpace: "pre-line" }}
+            <p className="mr-2 has-text-grey is-size-7">
+              Enter keyword(s) here <br />
+              to generate password
+            </p>
+            {keywordsInput(nInput)}
+            <button
+              id="submit-btn"
+              type="submit"
+              className={`button is-link ${isLoading} mr-2`}
             >
-              <div className="column is-11">{text}</div>
-              <div className="column is-1">
-                <CopyToClipboard text={text}>
-                  <button className="copy-btn button is-right is-small is-hidden">
-                    <i className="fas fa-copy"></i>
-                  </button>
-                </CopyToClipboard>
-              </div>
-            </div>
-          </article>
+              Submit
+            </button>
+            <button
+              id="randomly-submit-btn"
+              type="button"
+              className={`button is-primary ${isLoading} mr-2`}
+              onClick={onRandomSubmit}
+            >
+              Use Random Keywords
+            </button>
+          </form>
         </div>
-      </div>
-      <br />
-      <div className="columns is-centered">
-        <div className="column is-8">
-          <article className="message is-link">
-            <div className="message-header">
-              Password Result:
-              <span id="dropdown" className="is-hidden">
-                {dropdown()}
-              </span>
-            </div>
-            <div
-              id="psw-result"
-              className="message-body"
-              style={{ whiteSpace: "pre-line" }}
-            >
-              <div id="password" className="columns">
-                <div className="column is-11">{password}</div>
+        <br />
+        <div className="columns is-centered">
+          <div className="column is-8">
+            <article className="message is-link ">
+              <div className="message-header">Limerick Result:</div>
+              <div
+                id="limerick-result"
+                className="message-body columns"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                <div className="column is-11">{text}</div>
                 <div className="column is-1">
-                  <CopyToClipboard text={password}>
+                  <CopyToClipboard text={text}>
                     <button className="copy-btn button is-right is-small is-hidden">
                       <i className="fas fa-copy"></i>
                     </button>
                   </CopyToClipboard>
                 </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </div>
         </div>
-      </div>
-      <br />
-      <div className="columns is-centered ">
-        <article className="column is-8 has-text-left message">
-          <div className="message-body">
-            <p>Note:</p>
-            <p>
-              - The format of the password is the combination of "keyword input"
-              + "the last word of the 1st sentence" + "the last word of the 2nd
-              sentence" + "the last word of the 5th sentence". Since, according
-              to the format of limericks, the last word of 1st, 2nd and 5th
-              sentence rhyme with one another, the password would be easier to
-              memorize.
-            </p>
-            <p>
-              - The conversion of characters to number is achieved by{" "}
-              <a href="https://en.wikipedia.org/wiki/Leet">Leet</a>, which
-              replaces English letter by numbers with similar shape. For
-              example, letter "l" is replaced by number "1". The full conversion
-              rule could be referred as the following:
+        <div className="columns is-centered">
+          <div className="column is-8">
+            <article className="message is-link">
+              <div className="message-header">
+                Password Result:
+                <span id="dropdown" className="is-hidden">
+                  {dropdown()}
+                </span>
+              </div>
+              <div
+                id="psw-result"
+                className="message-body"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                <div id="password" className="columns">
+                  <div className="column is-11">{password}</div>
+                  <div className="column is-1">
+                    <CopyToClipboard text={password}>
+                      <button className="copy-btn button is-right is-small is-hidden">
+                        <i className="fas fa-copy"></i>
+                      </button>
+                    </CopyToClipboard>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div className="columns is-centered ">
+          <article className="column is-8 has-text-left message">
+            <div className="message-body">
               <p>
-                <ol
+                Note: <br />- The format of the password is the combination of
+                "keyword input" + "the last word of the 1st sentence" + "the
+                last word of the 2nd sentence" + "the last word of the 5th
+                sentence". Since, according to the format of limericks, the last
+                word of 1st, 2nd and 5th sentence rhyme with one another, the
+                password would be easier to memorize.
+              </p>
+              <p>
+                - The conversion of characters to number is achieved by{" "}
+                <a
+                  href="https://en.wikipedia.org/wiki/Leet"
+                  className="is-inline-flex"
+                >
+                  Leet
+                </a>
+                , which replaces English letter by numbers with similar shape.
+                For example, letter "l" is replaced by number "1". The full
+                conversion rule could be referred as the table on the right.
+              </p>
+              <p>
+                <ul
                   type="I"
-                  style={{ "list-style-position": "inside" }}
+                  style={{
+                    "list-style-position": "inside",
+                    "column-count": "2",
+                  }}
                   className="has-text-centered"
                 >
                   <li>a → 4</li>
@@ -331,12 +341,12 @@ const CatchyPass = () => {
                   <li>s → 5</li>
                   <li>t → 7</li>
                   <li>z → 2</li>
-                </ol>
+                </ul>
               </p>
-            </p>
-          </div>
-        </article>
-      </div>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
   );
 };
