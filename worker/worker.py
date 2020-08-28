@@ -17,7 +17,7 @@ pubsub.subscribe("keywords")
 
 # test only
 pubsub_sen = redis_client.pubsub()
-pubsub_sen.subscribe(["sentence"])
+pubsub_sen.subscribe(["text"])
 
 
 def sentence_result():
@@ -31,7 +31,7 @@ def sentence_result():
             data = eval(item["data"].decode())
             # Publish message when done
             redis_client.publish(
-                "sentence",
+                "text",
                 json.dumps({
                     "_id": data["_id"],
                     "textResult": keyword2text(data['keywords']),

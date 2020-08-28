@@ -16,12 +16,12 @@ module.exports = () => {
   const subscriber = client.duplicate();
   const publisher = client.duplicate();
 
-  subscriber.subscribe("sentence");
+  subscriber.subscribe("text");
   subscriber.subscribe("password");
   subscriber.on("message", async (channel, message) => {
-    if (channel === "sentence") {
+    if (channel === "text") {
       let { _id, status, textResult } = JSON.parse(message);
-      let sentence = await Result.findByIdAndUpdate(
+      let text = await Result.findByIdAndUpdate(
         _id,
         {
           $set: {
@@ -31,7 +31,7 @@ module.exports = () => {
         },
         { new: true }
       );
-      publisher.publish("password", JSON.stringify(sentence));
+      publisher.publish("password", JSON.stringify(text));
     }
   });
   subscriber.on("message", async (channel, message) => {
