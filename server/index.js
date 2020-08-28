@@ -22,7 +22,10 @@ app.get("/", (req, res) => {
  * Initialize Mongoose
  */
 const mongoUrl = `mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}`;
-mongoose.connect(mongoUrl, { useNewUrlParser: true });
+mongoose.connect(mongoUrl, { useNewUrlParser: true }).catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
 // Initialize schema
 require("./models/Result.js");
 
