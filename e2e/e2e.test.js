@@ -1,6 +1,6 @@
 const axios = require("axios");
 const config = require("./config");
-const rootUrl = "http://test.catchypass.me";
+const rootUrl = "http://test.catchypass.me"; // http://test.catchypass.me http://catchypass.me
 
 const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
@@ -103,5 +103,43 @@ describe("Users can type 1 keyword", () => {
     );
     console.log(passwordResult);
     expect(passwordResult.length > 1).toBeTruthy();
+  });
+});
+
+describe("When entering keywords", () => {
+  test("Input can only contain one keyword", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "first second";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain capital letters", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "Test";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain numbers", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "test1";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain special characters ", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "test@@";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
   });
 });
