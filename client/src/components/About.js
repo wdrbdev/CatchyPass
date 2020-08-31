@@ -2,6 +2,7 @@ import React from "react";
 
 const About = () => {
   return (
+    <section class="section px-1 py-1">
     <div className="container">
       <div className="mt-2">
         <div id="about-title" className="title is-3">
@@ -16,6 +17,7 @@ const About = () => {
         </div>
       </div>
     </div>
+    </section>
   );
 };
 
