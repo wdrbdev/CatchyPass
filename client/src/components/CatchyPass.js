@@ -17,7 +17,7 @@ const CatchyPass = () => {
   const [text, setText] = useState("\n");
   const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
-  const [isLoading, setIsLoading] = useState("");
+  const [isLoading, setIsLoading] = useState("not-loading");
   const [intervalTime, setIntervalTime] = useState(INTERVAL_TIME);
 
   /*
@@ -47,6 +47,7 @@ const CatchyPass = () => {
 
           setPassword(passwordResult[0]);
           setIntervalTime(null); // Stop checking database regularly
+          setIsLoading("not-loading");
         }
       }
       setResult();
