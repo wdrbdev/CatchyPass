@@ -5,7 +5,7 @@ const Tutorial = () => {
     <section class="section px-1 py-1">
       <div className="container">
         <div className="mt-2">
-          <div id="tutorial-title" className="title is-3">
+          <div id="tutorial-title" className="title is-2">
             CatchyPass - Tutorial
           </div>
           <div className="is-size-5">
