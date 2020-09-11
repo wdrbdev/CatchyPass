@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const config = require("../config");
 const sent2pass = require("./sent2pass");
 const Result = mongoose.model("Result");
-const sleep = require("sleep");
 
 module.exports = () => {
   const client = redis.createClient({
@@ -54,7 +53,7 @@ module.exports = () => {
         { new: true }
       );
 
-      sleep.sleep(60);
+      await new Promise((resolve) => setTimeout(resolve, 60000));
       await Result.findByIdAndRemove(_id);
     }
   });
