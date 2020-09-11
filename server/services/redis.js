@@ -55,10 +55,10 @@ module.exports = () => {
         },
         { new: true }
       );
-    }
 
-    sleep(30000);
-    await Result.findByIdAndRemove(_id);
+      sleep(30000);
+      await Result.findByIdAndRemove(_id);
+    }
   });
 
   // Return all redis objects
