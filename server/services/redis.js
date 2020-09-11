@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 const config = require("../config");
 const sent2pass = require("./sent2pass");
 const Result = mongoose.model("Result");
-const sleep = (ms) => {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-};
+const sleep = require("sleep");
 
 module.exports = () => {
   const client = redis.createClient({
@@ -56,7 +54,7 @@ module.exports = () => {
         { new: true }
       );
 
-      sleep(30000);
+      sleep.sleep(60);
       await Result.findByIdAndRemove(_id);
     }
   });
