@@ -1,21 +1,9 @@
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+# Modified from https://github.com/GoogleCloudPlatform/cloudbuild-integration-testing/blob/master/cloudbuild.gke-per-test.yaml
 steps:
   - id: "clone from GitHub repo"
     name: gcr.io/cloud-builders/git
-    args: ["clone", "https://github.com/lightcoker/CatchyPass.git"]
+    args:
+      ["clone", "-b", "feature", "https://github.com/lightcoker/CatchyPass.git"]
 
   - id: "create cluster"
     name: "gcr.io/cloud-builders/gcloud"
@@ -52,7 +40,7 @@ steps:
       - "my-nginx"
       - "stable/nginx-ingress"
       - "--set"
-      - "controller.service.loadBalancerIP=35.220.154.72,rbac.create=true"
+      - "controller.service.loadBalancerIP=35.220.223.187,rbac.create=true"
     waitFor: ["helm add repo"]
 
   # PVC
@@ -61,16 +49,16 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/mongodb-pvc.yaml"
+      - "./k8s/test/mongodb-pvc.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # ingress setup
-  - id: "deploy ingress local service"
+  - id: "deploy ingress test service"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/ingress-service-local.yaml"
+      - "./k8s/test/ingress-service-test.yaml"
     waitFor: ["deploy ingress-nginx"]
 
   # mongo docker
@@ -90,7 +78,7 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/mongodb-deployment.yaml"
+      - "./k8s/test/deployment/mongodb-deployment.yaml"
     waitFor: ["set mongo secret"]
 
   # redis
@@ -99,8 +87,8 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/redis-deployment.yaml"
-    waitFor: ["patch k8s config"]
+      - "./k8s/test/deployment/redis-deployment.yaml"
+    waitFor: ["deploy mongo"]
 
   # service
   - id: "deploy services"
@@ -108,24 +96,23 @@ steps:
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/service/"
-    waitFor: ["deploy ingress local service"]
+      - "./k8s/test/service/"
+    waitFor: ["deploy ingress test service"]
 
-  # server docker
-  # Build images
+  # server
   - id: "build server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
       - "./server"
-    waitFor: ["patch k8s config"]
+    waitFor: ["deploy services"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/server-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
     waitFor: ["build server docker"]
   - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
@@ -133,14 +120,15 @@ steps:
     args:
       - "-c"
       - |
-        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/server-deployment.yaml
-        # cat ./k8s/staging/deployment/server-deployment.yaml
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/server-deployment.yaml
+        # cat ./k8s/test/deployment/server-deployment.yaml
+    waitFor: ["push server docker"]
   - id: "deploy server"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/server-deployment.yaml"
+      - "./k8s/test/deployment/server-deployment.yaml"
     waitFor: ["replace tag for server"]
 
   # worker
@@ -149,14 +137,14 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
       - "./worker"
-    waitFor: ["deploy server"]
+    waitFor: ["deploy services"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/worker-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
     waitFor: ["build worker docker"]
   - id: "replace tag for worker"
     name: "gcr.io/cloud-builders/gcloud"
@@ -164,15 +152,15 @@ steps:
     args:
       - "-c"
       - |
-        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/worker-deployment.yaml
-        # cat ./k8s/staging/deployment/worker-deployment.yaml
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/worker-deployment.yaml
+        # cat ./k8s/test/deployment/worker-deployment.yaml
     waitFor: ["push worker docker"]
   - id: "deploy worker"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/worker-deployment.yaml"
+      - "./k8s/test/deployment/worker-deployment.yaml"
     waitFor: ["replace tag for worker"]
 
   # client
@@ -181,29 +169,30 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
       - "./client"
-    waitFor: ["deploy worker"]
+    waitFor: ["deploy services"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/client-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+    waitFor: ["build client docker"]
   - id: "replace tag for client"
     name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
       - "-c"
       - |
-        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/deployment/client-deployment.yaml
-        # cat ./k8s/staging/deployment/client-deployment.yaml
-    waitFor: ["build client docker"]
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/deployment/client-deployment.yaml
+        # cat ./k8s/test/deployment/client-deployment.yaml
+    waitFor: ["push client docker"]
   - id: "deploy client"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/deployment/client-deployment.yaml"
+      - "./k8s/test/deployment/client-deployment.yaml"
     waitFor: ["replace tag for client"]
 
   # Integration testing
@@ -222,7 +211,6 @@ steps:
             sleep 3
         done
         echo "$(get_nodeport)" > _nodeport # save port for use in next step
-        echo $(cat _nodeport)
         # grab the public IP of a random node
         # (why do this instead of a load balancer? b/c it's faster to instantiate)
         # (and doesn't require additional billable resources)
@@ -235,23 +223,29 @@ steps:
             sleep 3
         done
         echo $(get_nodeip) > _nodeip # save ip for use in next step
-        echo $(cat _nodeip)
-    waitFor: ["deploy client"]
+    waitFor: ["deploy worker"]
 
   # e2e job
+  - id: "wait for worker"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "wait"
+      - "--for=condition=available"
+      - "deployment/worker-deployment"
+      - "--timeout=10m"
   - id: "build e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
       - "./e2e"
-    waitFor: ["deploy client"]
+    waitFor: ["wait for worker"]
   - id: "push e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/e2e-stg:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
     waitFor: ["build e2e docker"]
   - id: "replace tag for e2e"
     name: "gcr.io/cloud-builders/gcloud"
@@ -259,16 +253,15 @@ steps:
     args:
       - "-c"
       - |
-        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/staging/test/e2e.yaml
-        sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/staging/test/e2e.yaml
-        cat ./k8s/staging/test/e2e.yaml
+        sed -i "s/ENV_VARS_SHORT_SHA/$SHORT_SHA/g" ./k8s/test/test/e2e.yaml
+        sed -i "s/ENV_VARS_RESERVED_IP/${_RESERVED_IP}/g" ./k8s/test/test/e2e.yaml
     waitFor: ["push e2e docker"]
   - id: "deploy e2e"
     name: "gcr.io/cloud-builders/kubectl"
     args:
       - "apply"
       - "-f"
-      - "./k8s/staging/test/e2e.yaml"
+      - "./k8s/test/test/e2e.yaml"
     waitFor: ["replace tag for e2e"]
   - id: "wait e2e to finish"
     name: "gcr.io/cloud-builders/kubectl"
@@ -276,17 +269,26 @@ steps:
       - "wait"
       - "--for=condition=complete"
       - "job/e2e"
-      - "--timeout=10m"
+      - "--timeout=30m"
     waitFor: ["deploy e2e"]
+  - id: "show log of jobs"
+    name: "gcr.io/cloud-builders/kubectl"
+    args:
+      - "logs"
+      - "-f"
+      - "job/e2e"
+      - "--all-containers=true"
+    waitFor: ["wait e2e to finish"]
 
-  # - id: "delete cluster"
-  #   name: "gcr.io/cloud-builders/gcloud"
-  #   entrypoint: "bash"
-  #   args:
-  #     - "-c"
-  #     - |
-  #       gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
-  #   waitFor: ["wait e2e to finish"]
+  # cleaning up
+  - id: "delete cluster"
+    name: "gcr.io/cloud-builders/gcloud"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud container clusters delete $(cat _cluster-name) --quiet # don't prompt for confirmation
+    waitFor: ["show log of jobs"]
 
 options:
   env:
@@ -295,4 +297,4 @@ options:
     - CLOUDSDK_CONTAINER_CLUSTER=test-$SHORT_SHA
     - CI=true
 
-timeout: 30m0s
+timeout: 40m0s

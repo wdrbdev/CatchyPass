@@ -13,6 +13,8 @@ module.exports = (
     e: 3,
     g: 6,
     l: 1,
+    o: 0,
+    r: 2,
     s: 5,
     t: 7,
     z: 2,
