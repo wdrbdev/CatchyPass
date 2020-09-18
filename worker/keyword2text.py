@@ -2,12 +2,11 @@ from aitextgen import aitextgen
 from aitextgen.utils import GPT2ConfigCPU
 
 
-def keyword2text(keywords):
+def keyword2text(keyword):
     config_path = './data/catchypass/trained_model/config.json'
     model_path = './data/catchypass/trained_model/pytorch_model.bin'
     ai = aitextgen(model=model_path, config=config_path)
 
-    keyword = " ".join(keywords).lower()
     prefix = f"#{keyword}"
     N_RETRY = 0
     retry_count = 0
