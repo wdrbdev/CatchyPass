@@ -16,31 +16,33 @@ module.exports = () => {
   const subscriber = client.duplicate();
   const publisher = client.duplicate();
 
-  subscriber.subscribe("sentence");
+  subscriber.subscribe("text");
   subscriber.subscribe("password");
+
   subscriber.on("message", async (channel, message) => {
-    if (channel === "sentence") {
-      let { _id, status, sentenceResult } = JSON.parse(message);
-      let sentence = await Result.findByIdAndUpdate(
+    if (channel === "text") {
+      let { _id, status, textResult } = JSON.parse(message);
+      let text = await Result.findByIdAndUpdate(
         _id,
         {
           $set: {
-            sentenceResult,
+            textResult,
             status,
           },
         },
         { new: true }
       );
-      publisher.publish("password", JSON.stringify(sentence));
+      publisher.publish("password", JSON.stringify(text));
     }
   });
+
   subscriber.on("message", async (channel, message) => {
     if (channel === "password") {
-      let { _id, sentenceResult, keywords } = JSON.parse(message);
+      let { _id, textResult, keywords } = JSON.parse(message);
       let passwordResult = [
-        sent2pass(sentenceResult, keywords, "", false), // Only upper case
-        sent2pass(sentenceResult, keywords), // Upper case and number
-        sent2pass(sentenceResult, keywords, "."), // Upper case, number and special characters
+        sent2pass(textResult, keywords, "", false), // Only upper case
+        sent2pass(textResult, keywords), // Upper case and number
+        sent2pass(textResult, keywords, "."), // Upper case, number and special characters
       ];
       await Result.findByIdAndUpdate(
         _id,
@@ -52,6 +54,9 @@ module.exports = () => {
         },
         { new: true }
       );
+
+      await new Promise((resolve) => setTimeout(resolve, 60000));
+      await Result.findByIdAndRemove(_id);
     }
   });
 

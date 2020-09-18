@@ -1,17 +1,19 @@
 const axios = require("axios");
 const config = require("./config");
-const rootUrl = "http://test.catchypass.me";
+const rootUrl = "http://test.catchypass.me"; // http://test.catchypass.me http://catchypass.me
 
 const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 };
 
-beforeEach(async () => {
+beforeAll(async () => {
   jest.setTimeout(100000);
+});
+beforeEach(async () => {
   await page.goto(rootUrl);
 });
 
-test("Test IP address in env variable.", async () => {
+test("Test if the root URL is available.", async () => {
   const res = await axios.get(`${rootUrl}`);
   expect(res.status).toEqual(200);
 });
@@ -28,6 +30,12 @@ describe("When users navigate to the website,", () => {
       (elem) => elem.innerHTML
     );
     expect(projectName).toEqual("CatchyPass");
+  });
+
+  test("Users can see input & submit buttons", async () => {
+    await page.waitFor(`input[name="keyword 1"]`);
+    await page.waitFor(`button#submit-btn`);
+    await page.waitFor(`button#randomly-submit-btn`);
   });
 
   test("Users can see tutorial page", async () => {
@@ -103,5 +111,43 @@ describe("Users can type 1 keyword", () => {
     );
     console.log(passwordResult);
     expect(passwordResult.length > 1).toBeTruthy();
+  });
+});
+
+describe("When entering keywords", () => {
+  test("Input can only contain one keyword", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "first second";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain capital letters", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "Test";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain numbers", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "test1";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
+  });
+
+  test("Input cannot contain special characters ", async () => {
+    await page.$eval(`input[name="keyword 1"]`, (elem) => {
+      elem.value = "test@@";
+    });
+    await page.click("button#submit-btn");
+    sleep(1000);
+    await page.$eval(".not-loading", (elem) => elem);
   });
 });
