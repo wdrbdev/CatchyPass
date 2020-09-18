@@ -11,7 +11,7 @@ def keyword2text(keyword):
     N_RETRY = 0
     retry_count = 0
     while retry_count <= N_RETRY:
-        texts = ai.generate(n=1,
+        texts = ai.generate(n=3,
                             prompt=prefix,
                             max_length=256,
                             temperature=1.0,
