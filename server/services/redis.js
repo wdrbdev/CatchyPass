@@ -22,6 +22,7 @@ module.exports = () => {
   subscriber.on("message", async (channel, message) => {
     if (channel === "text") {
       let { _id, status, textResult } = JSON.parse(message);
+      console.log(`Receiving text ${textResult}`);
       let text = await Result.findByIdAndUpdate(
         _id,
         {
