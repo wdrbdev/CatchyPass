@@ -18,6 +18,7 @@ module.exports = () => {
 
   subscriber.subscribe("text");
   subscriber.subscribe("password");
+
   subscriber.on("message", async (channel, message) => {
     if (channel === "text") {
       let { _id, status, textResult } = JSON.parse(message);
@@ -34,6 +35,7 @@ module.exports = () => {
       publisher.publish("password", JSON.stringify(text));
     }
   });
+
   subscriber.on("message", async (channel, message) => {
     if (channel === "password") {
       let { _id, textResult, keywords } = JSON.parse(message);
