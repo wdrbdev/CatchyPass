@@ -11,22 +11,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - catchypass.me
-        - www.catchypass.me
+        - test.catchypass.me
       secretName: tls-secret
   rules:
-    - host: catchypass.me
-      http:
-        paths:
-          - path: /?(.*)
-            backend:
-              serviceName: client-clusterip
-              servicePort: 3000
-          - path: /api/?(.*)
-            backend:
-              serviceName: server-clusterip
-              servicePort: 5000
-    - host: www.catchypass.me
+    - host: test.catchypass.me
       http:
         paths:
           - path: /?(.*)

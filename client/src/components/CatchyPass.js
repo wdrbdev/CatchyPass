@@ -13,27 +13,27 @@ const CatchyPass = () => {
   const [status, setStatus] = useState(
     `Please enter 0 - ${nInput} keyword(s). \nIf no input provided, a random result would be generated.`
   );
-  const [sentenceId, setSentenceId] = useState(null);
-  const [sentence, setSentence] = useState("\n");
+  const [textId, setTextId] = useState(null);
+  const [text, setText] = useState("\n");
   const [password, setPassword] = useState("\n");
   const [passwordResult, setPasswordResult] = useState([]);
-  const [isLoading, setIsLoading] = useState("");
+  const [isLoading, setIsLoading] = useState("not-loading");
   const [intervalTime, setIntervalTime] = useState(INTERVAL_TIME);
 
   /*
    * Check database regularly
    */
   useInterval(() => {
-    if (sentenceId) {
+    if (textId) {
       async function setResult() {
         let res = await axios.post(
           "/api/result",
           {
-            _id: sentenceId,
+            _id: textId,
           },
           { headers: { "Content-Type": "application/json" } }
         );
-        setSentence(res.data.sentenceResult || "\n");
+        setText(res.data.textResult || "\n");
         setPasswordResult(res.data.passwordResult || []);
 
         if (passwordResult.length > 0) {
@@ -45,8 +45,9 @@ const CatchyPass = () => {
           setStatus("Password result is generated.");
           setIsLoading("");
 
-          setPassword(passwordResult[1]);
+          setPassword(passwordResult[0]);
           setIntervalTime(null); // Stop checking database regularly
+          setIsLoading("not-loading");
         }
       }
       setResult();
@@ -75,11 +76,11 @@ const CatchyPass = () => {
     document.getElementById("dropdown-info").innerHTML =
       "Select password types";
 
-    setSentenceId(res.data._id);
+    setTextId(res.data._id);
     setStatus("Keywords submitted. The result is being processed.");
     setIsLoading("is-loading");
 
-    setSentence("\n");
+    setText("\n");
     setPassword("\n");
     setIntervalTime(INTERVAL_TIME);
     setPasswordResult([]);
@@ -184,7 +185,7 @@ const CatchyPass = () => {
             <a
               id="password-uppercase"
               href="#"
-              className="dropdown-item"
+              className="dropdown-item is-active"
               onClick={dropdownItemOnClick}
             >
               Including only letters
@@ -192,7 +193,7 @@ const CatchyPass = () => {
             <a
               id="password-number"
               href="#"
-              className="dropdown-item is-active"
+              className="dropdown-item"
               onClick={dropdownItemOnClick}
             >
               Including numbers
@@ -221,77 +222,132 @@ const CatchyPass = () => {
         Generate strong and easy-to-remember password based on limericks written
         through the keywords
       </div>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)} className="columns is-centered">
-          {keywordsInput(nInput)}
-          <button
-            id="submit-btn"
-            type="submit"
-            className={`button is-info ${isLoading} mr-2`}
+      <section class="section px-1 py-1">
+        <div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="columns is-centered"
           >
-            Submit
-          </button>
-          <button
-            id="randomly-submit-btn"
-            type="button"
-            className={`button is-primary ${isLoading} mr-2`}
-            onClick={onRandomSubmit}
-          >
-            Use Random Keywords
-          </button>
-        </form>
-      </div>
-      <br />
-      <div className="columns is-centered">
-        <div className="column is-8">
-          <article className="message is-link ">
-            <div className="message-header">Limerick Result:</div>
-            <div
-              id="limerick-result"
-              className="message-body columns"
-              style={{ whiteSpace: "pre-line" }}
+            <p className="mr-2 has-text-grey is-size-7">
+              Enter keyword(s) here <br />
+              to generate password
+            </p>
+            {keywordsInput(nInput)}
+            <button
+              id="submit-btn"
+              type="submit"
+              className={`button is-link ${isLoading} mr-2`}
             >
-              <div className="column is-11">{sentence}</div>
-              <div className="column is-1">
-                <CopyToClipboard text={sentence}>
-                  <button className="copy-btn button is-right is-small is-hidden">
-                    <i className="fas fa-copy"></i>
-                  </button>
-                </CopyToClipboard>
-              </div>
-            </div>
-          </article>
+              Submit
+            </button>
+            <button
+              id="randomly-submit-btn"
+              type="button"
+              className={`button is-primary ${isLoading} mr-2`}
+              onClick={onRandomSubmit}
+            >
+              Use Random Keywords
+            </button>
+          </form>
         </div>
-      </div>
-      <br />
-      <div className="columns is-centered">
-        <div className="column is-8">
-          <article className="message is-link">
-            <div className="message-header">
-              Password Result:
-              <span id="dropdown" className="is-hidden">
-                {dropdown()}
-              </span>
-            </div>
-            <div
-              id="psw-result"
-              className="message-body"
-              style={{ whiteSpace: "pre-line" }}
-            >
-              <div id="password" className="columns">
-                <div className="column is-11">{password}</div>
+        <br />
+        <div className="columns is-centered">
+          <div className="column is-8">
+            <article className="message is-link ">
+              <div className="message-header">Limerick Result:</div>
+              <div
+                id="limerick-result"
+                className="message-body columns"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                <div className="column is-11">{text}</div>
                 <div className="column is-1">
-                  <CopyToClipboard text={password}>
+                  <CopyToClipboard text={text}>
                     <button className="copy-btn button is-right is-small is-hidden">
                       <i className="fas fa-copy"></i>
                     </button>
                   </CopyToClipboard>
                 </div>
               </div>
+            </article>
+          </div>
+        </div>
+        <div className="columns is-centered">
+          <div className="column is-8">
+            <article className="message is-link">
+              <div className="message-header">
+                Password Result:
+                <span id="dropdown" className="is-hidden">
+                  {dropdown()}
+                </span>
+              </div>
+              <div
+                id="psw-result"
+                className="message-body"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                <div id="password" className="columns">
+                  <div className="column is-11">{password}</div>
+                  <div className="column is-1">
+                    <CopyToClipboard text={password}>
+                      <button className="copy-btn button is-right is-small is-hidden">
+                        <i className="fas fa-copy"></i>
+                      </button>
+                    </CopyToClipboard>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div className="columns is-centered ">
+          <article className="column is-8 has-text-left message">
+            <div className="message-body">
+              <p>
+                Note: <br />- The format of the password is the combination of
+                "keyword input" + "the last word of the 1st sentence" + "the
+                last word of the 2nd sentence" + "the last word of the 5th
+                sentence". Since, according to the format of limericks, the last
+                word of 1st, 2nd and 5th sentence rhyme with one another, the
+                password would be easier to memorize.
+              </p>
+              <p>
+                - The conversion of characters to number is achieved by{" "}
+                <a
+                  href="https://en.wikipedia.org/wiki/Leet"
+                  className="is-inline-flex"
+                >
+                  Leet
+                </a>
+                , which replaces English letter by numbers with similar shape.
+                For example, letter "l" is replaced by number "1". The full
+                conversion rule could be referred as the table on the right.
+              </p>
+              <p>
+                <ul
+                  type="I"
+                  style={{
+                    "list-style-position": "inside",
+                    "column-count": "2",
+                  }}
+                  className="has-text-centered"
+                >
+                  <li>a → 4</li>
+                  <li>b → 8</li>
+                  <li>e → 3</li>
+                  <li>g → 6</li>
+                  <li>l → 1</li>
+                  <li>o → 0</li>
+                  <li>r → 2</li>
+                  <li>s → 5</li>
+                  <li>t → 7</li>
+                  <li>z → 2</li>
+                </ul>
+              </p>
             </div>
           </article>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react
+  template:
+    metadata:
+      labels:
+        app: react
+    spec:
+      containers:
+        - name: client
+          image: asia.gcr.io/catchypass-dev/client-test:ENV_VARS_SHORT_SHA
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
