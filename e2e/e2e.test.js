@@ -6,12 +6,14 @@ const sleep = (ms) => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 };
 
-beforeEach(async () => {
+beforeAll(async () => {
   jest.setTimeout(100000);
+});
+beforeEach(async () => {
   await page.goto(rootUrl);
 });
 
-test("Test IP address in env variable.", async () => {
+test("Test if the root URL is available.", async () => {
   const res = await axios.get(`${rootUrl}`);
   expect(res.status).toEqual(200);
 });
@@ -28,6 +30,12 @@ describe("When users navigate to the website,", () => {
       (elem) => elem.innerHTML
     );
     expect(projectName).toEqual("CatchyPass");
+  });
+
+  test("Users can see input & submit buttons", async () => {
+    await page.waitFor(`input[name="keyword 1"]`);
+    await page.waitFor(`button#submit-btn`);
+    await page.waitFor(`button#randomly-submit-btn`);
   });
 
   test("Users can see tutorial page", async () => {
