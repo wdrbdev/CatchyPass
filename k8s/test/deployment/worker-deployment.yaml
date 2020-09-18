@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python
+  template:
+    metadata:
+      labels:
+        app: python
+    spec:
+      containers:
+        - name: worker
+          image: asia.gcr.io/catchypass-dev/worker-test:ENV_VARS_SHORT_SHA
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REDIS_HOST
+              value: redisnodeport
+            - name: REDIS_PORT
+              value: "6379"
+          command: ["python", "-u", "worker.py"]

@@ -41,7 +41,9 @@ const Header = () => {
       <div className="navbar-brand">
         <a className="navbar-item" href="/">
           <img src={logo} alt="CatchyPass" width="auto" height="100%" />
-          <strong className="is-size-4 px-1">CatchyPass</strong>
+          <strong id="project-name" className="is-size-4 px-1">
+            CatchyPass
+          </strong>
         </a>
         <div className="navbar-burger burger" data-target="navMenu">
           <span></span>
