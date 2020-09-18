@@ -27,7 +27,6 @@ def sentence_result():
 
         if item["type"] == "message" and item["channel"].decode(
         ) == "keywords":
-            # TODO actions when receiving message
             data = eval(item["data"].decode())
             # Publish message when done
             redis_client.publish(
