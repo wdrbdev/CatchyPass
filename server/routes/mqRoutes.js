@@ -20,6 +20,7 @@ module.exports = (app, { client, subscriber, publisher }) => {
           keywords,
         })
       );
+      console.log(`Publishing keywords ${keywords}`);
       res.json(result);
     } catch (err) {
       res.sendStatus(400, err);
