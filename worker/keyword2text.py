@@ -2,18 +2,17 @@ from aitextgen import aitextgen
 from aitextgen.utils import GPT2ConfigCPU
 
 
-def keyword2text(keywords):
-    # Initialize aitextgen
+def keyword2text(keyword):
     config_path = './data/catchypass/trained_model/config.json'
     model_path = './data/catchypass/trained_model/pytorch_model.bin'
     ai = aitextgen(model=model_path, config=config_path)
 
-    keyword = keywords.lower()
+    keyword = str(keyword)
     prefix = f"#{keyword}"
     N_RETRY = 0
     retry_count = 0
     while retry_count <= N_RETRY:
-        texts = ai.generate(n=1,
+        texts = ai.generate(n=3,
                             prompt=prefix,
                             max_length=256,
                             temperature=1.0,
