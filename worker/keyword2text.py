@@ -7,6 +7,7 @@ def keyword2text(keyword):
     model_path = './data/catchypass/trained_model/pytorch_model.bin'
     ai = aitextgen(model=model_path, config=config_path)
 
+    keyword = str(keyword)
     prefix = f"#{keyword}"
     N_RETRY = 0
     retry_count = 0
