@@ -8,10 +8,12 @@ def keyword2text(keywords):
     model_path = './data/catchypass/trained_model/pytorch_model.bin'
     ai = aitextgen(model=model_path, config=config_path)
 
-    keyword = str(keywords).lower()  # keyword = " ".join(keywords).lower()
+    for k in keywords:
+        k = f'#{k}'
+    keyword = " ".join(keywords).lower()
+    prefix = " ".join(keywords).lower() + ": "
     N_RETRY = 0
     retry_count = 0
-    prefix = f'#{keyword}:'
     while retry_count <= N_RETRY:
         texts = ai.generate(n=1,
                             prompt=prefix,
