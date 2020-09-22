@@ -5,11 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "rhymebuster": "node rhymebuster.js"
+    "rhymebuster": "node rhymebuster.js",
+    "process": "node merge.js && node json2txt.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.0",
+    "csv-reader": "^1.0.6",
+    "csv-writer": "^1.6.0",
+    "lodash": "^4.17.19",
     "puppeteer": "^5.2.0"
   }
 }
