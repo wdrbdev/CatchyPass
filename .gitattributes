@@ -2,7 +2,3 @@
 *.bin filter=lfs diff=lfs merge=lfs -text
 worker/data/catchypass/keyword_pairs/keyword_result.csv filter=lfs diff=lfs merge=lfs -text
 worker/data/catchypass/keyword_pairs/keyword_result.txt filter=lfs diff=lfs merge=lfs -text
-/Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/crawler/raw_data/limerick(filtered).zip filter=lfs diff=lfs merge=lfs -text
-/Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/crawler/raw_data/raw_limericks.zip filter=lfs diff=lfs merge=lfs -text
-/Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/crawler/result/keyword_result.csv filter=lfs diff=lfs merge=lfs -text
-/Users/albert.lin/Desktop/MSc/Courses/Dissertation/code/catchypass-prod/worker/crawler/result/keyword_result.txt filter=lfs diff=lfs merge=lfs -text
