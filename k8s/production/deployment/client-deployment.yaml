@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: asia.gcr.io/catchypass-dev/client-prod
+          image: asia.gcr.io/catchypass-290411/client-prod
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
