@@ -141,5 +141,5 @@ helm install nginx stable/nginx-ingress \
 # Setup mongo secret
 kubectl create secret generic mongopassword --from-literal MONGO_PASSWORD=<password_for_mongodb>
 
-#TODO Note: Update project name in k8s folder
+#TODO Note: Update project name in k8s & cloudbuild folder
 exit 1
