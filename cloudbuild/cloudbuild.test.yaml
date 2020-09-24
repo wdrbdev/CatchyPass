@@ -105,14 +105,14 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/server-test:$SHORT_SHA"
       - "./server"
     waitFor: ["deploy services"]
   - id: "push server docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/server-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/server-test:$SHORT_SHA"
     waitFor: ["build server docker"]
   - id: "replace tag for server"
     name: "gcr.io/cloud-builders/gcloud"
@@ -137,14 +137,14 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/worker-test:$SHORT_SHA"
       - "./worker"
     waitFor: ["deploy services"]
   - id: "push worker docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/worker-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/worker-test:$SHORT_SHA"
     waitFor: ["build worker docker"]
   - id: "replace tag for worker"
     name: "gcr.io/cloud-builders/gcloud"
@@ -169,14 +169,14 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/client-test:$SHORT_SHA"
       - "./client"
     waitFor: ["deploy services"]
   - id: "push client docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/client-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/client-test:$SHORT_SHA"
     waitFor: ["build client docker"]
   - id: "replace tag for client"
     name: "gcr.io/cloud-builders/gcloud"
@@ -238,14 +238,14 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/e2e-test:$SHORT_SHA"
       - "./e2e"
     waitFor: ["wait for worker"]
   - id: "push e2e docker"
     name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia.gcr.io/catchypass-dev/e2e-test:$SHORT_SHA"
+      - "asia.gcr.io/catchypass-290411/e2e-test:$SHORT_SHA"
     waitFor: ["build e2e docker"]
   - id: "replace tag for e2e"
     name: "gcr.io/cloud-builders/gcloud"
