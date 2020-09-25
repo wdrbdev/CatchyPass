@@ -13,4 +13,4 @@ Other information could be referred to the following links:
 
 - [BBC News - Password guru regrets past advice](https://www.bbc.com/news/technology-40875534)
 - [Correct horse battery staple: Exploring the usability of system-assigned passphrases](http://cups.cs.cmu.edu/rshay/pubs/shay2012correct.pdf)
-- [NIST Special Publication 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html)
+- [NIST Special Publication 800-63B: Appendix A—Strength of Memorized Secrets](https://pages.nist.gov/800-63-3/sp800-63b.html#appA)
