@@ -1,1 +1,2 @@
 worker/data/catchypass/trained_model/pytorch_model.bin filter=lfs diff=lfs merge=lfs -text
+worker/data/catchypass/keyword_pairs/keyword_result.csv filter=lfs diff=lfs merge=lfs -text
