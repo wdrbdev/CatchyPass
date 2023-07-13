@@ -43,7 +43,7 @@ Other information could be referred to as the following links:
 
 The web application is designed as n-tier architecture that consists of multiple stand-alone and containerized applications as illustrated below. The architecture not only increases the scalability and flexibility of the whole system and each component but also facilitates development and deployment. All components are managed by Kubernetes, the container-orchestration system, to achieve high flexibility and portability. The system could be horizontally scaled out and deployed in any cloud infrastructure effortlessly.
 
-![system architecture](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/system_architecture.png)
+![system architecture](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/system_architecture.png?raw=true)
 
 ##### Technologies
 
@@ -59,8 +59,7 @@ The web application is designed as n-tier architecture that consists of multiple
 ##### Sequence Diagram for NLG process
 
 NLG is performed in the worker application. When receiving keyword input from the frontend server, the backend server would dispatch the keywords to the worker through message queuing. The worker would then generate a limerick by applying the pre-trained text generation model. The result would be dispatch to the backend server and generate a password accordingly. The interaction and operation between components are illustrated as sequence diagram below.
-
-![sequence diagram](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/sequence_diagram.png)
+![sequence diagram](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/sequence_diagram.png?raw=true)
 
 ## CI/CD Workflow
 
@@ -68,13 +67,13 @@ The CI/CD workflow is applied to facilitate development and deployment as well a
 
 After a new feature is developed in the local development environment, it would go through three environments, including test, staging and production, before it becomes available for end users. All configurations of CI/CD are set in the “cloudbuild” directory for all three environments. The CI/CD workflow applied in this project is illustrated below.
 
-![ci/cd workflow](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/cicd_workflow.png)
+![ci/cd workflow](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/cicd_workflow.png?raw=true)
 
 ## User Flow
 
 The user flow is presented below to demonstrate how users could utilize CatchyPass. It contains a sequence of steps which users take to generate passwords or explore different pages. After navigating to the homepage on catchypass.me, the user could see a navigation bar as the header containing links to each page and a form for password generation as shown in the screenshot section. The user could generate passwords on the homepage. Otherwise, if users would like to know more about CatchyPass, they could navigate to the tutorial page to understand how to utilize CatchyPass or to the about page to see more information about CatchyPass by clicking links in the navigation bar. 
-
-![user flow](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/user_flow_with_background.png) 
+(link: https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/user_flow.png )
+![user flow](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/user_flow.png?raw=true) 
 
 ## Screenshot
 
@@ -82,9 +81,9 @@ To generate passwords, users could utilize the form on the homepage. It contains
 
 - Home page: Users can enter keywords to generate both limerick and password.
 
-![homepage](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/screenshot_homepage.png)
+![homepage](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/screenshot_homepage.png?raw=true)
 
 - Password result from NLG after entering keyword "flower" and clicking the submit button.
 
-![password result](https://raw.githubusercontent.com/lightcoker/CatchyPass/master/doc/img/screenshot_result.png)
+![password result](https://github.com/wdrbdev/CatchyPass/blob/master/doc/img/screenshot_result.png?raw=true)
 
